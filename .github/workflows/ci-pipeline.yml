@@ -2,9 +2,9 @@ name: DSA API CI (Production Ready)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   # ------------------------------------------------------------------
@@ -23,12 +23,12 @@ jobs:
       - name: Run Trivy (Filesystem)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
+          scan-type: "fs"
+          scan-ref: "."
           ignore-unfixed: true
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1' # Block build if secrets found
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Block build if secrets found
 
       # B. CODEQL (Deep Logic Scan)
       - name: Initialize CodeQL
@@ -40,7 +40,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
 
       - name: Build for CodeQL
         run: dotnet build DSA.sln --configuration Release
@@ -58,14 +58,14 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
-      
+          dotnet-version: "10.0.x"
+
       - name: Restore
         run: dotnet restore DSA.sln
 
       - name: Unit Tests
         run: dotnet test tests/DSA.UnitTests/DSA.UnitTests.csproj --no-restore --verbosity normal
-      
+
       - name: Integration Tests
         run: dotnet test tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj --no-restore --verbosity normal
 
@@ -89,11 +89,11 @@ jobs:
       - name: Run Trivy (Container)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'local-dsa-api:${{ github.sha }}'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1' # Block push if OS is vulnerable
+          scan-type: "image"
+          image-ref: "local-dsa-api:${{ github.sha }}"
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Block push if OS is vulnerable
 
       # 3. Login & Push
       - name: Login to GHCR
@@ -105,5 +105,5 @@ jobs:
 
       - name: Push Image
         run: |
-          docker tag local-dsa-api:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/dsa-api:latest
-          docker push ghcr.io/${{ github.repository_owner }}/dsa-api:latest
+          docker tag local-dsa-api:${{ github.sha }} ghcr.io/vimal-santoki/dsa-api:latest
+          docker push ghcr.io/vimal-santoki/dsa-api:latest
