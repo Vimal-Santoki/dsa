@@ -1,0 +1,9 @@
+﻿@HostAddress = "https://localhost:62074"
+
+### 1. Run Bubble Sort
+POST {{HostAddress}}/api/sort/bubblesort
+Content-Type : application/json
+{
+    "array": [64, 34, 25, 12, 22, 11, 90]
+}   
+#Response

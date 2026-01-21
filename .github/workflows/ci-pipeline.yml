@@ -1,0 +1,109 @@
+name: DSA API CI (Production Ready)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ------------------------------------------------------------------
+  # JOB 1: SECURITY ANALYSIS (SAST)
+  # ------------------------------------------------------------------
+  security-analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Required for CodeQL
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # A. TRIVY (Fast Secrets/Config Scan)
+      - name: Run Trivy (Filesystem)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          ignore-unfixed: true
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1' # Block build if secrets found
+
+      # B. CODEQL (Deep Logic Scan)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+
+      # CodeQL needs to see the build happen to analyze it
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build for CodeQL
+        run: dotnet build DSA.sln --configuration Release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # ------------------------------------------------------------------
+  # JOB 2: QUALITY GATES (Tests)
+  # ------------------------------------------------------------------
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Restore
+        run: dotnet restore DSA.sln
+
+      - name: Unit Tests
+        run: dotnet test tests/DSA.UnitTests/DSA.UnitTests.csproj --no-restore --verbosity normal
+      
+      - name: Integration Tests
+        run: dotnet test tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj --no-restore --verbosity normal
+
+  # ------------------------------------------------------------------
+  # JOB 3: SECURE DELIVERY (Docker)
+  # ------------------------------------------------------------------
+  docker-delivery:
+    needs: [security-analysis, test-suite] # Only runs if BOTH previous jobs pass
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Build
+      - name: Build Local Image
+        run: docker build . --file Dockerfile -t local-dsa-api:${{ github.sha }}
+
+      # 2. Scan Container (SCA)
+      - name: Run Trivy (Container)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'local-dsa-api:${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1' # Block push if OS is vulnerable
+
+      # 3. Login & Push
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Image
+        run: |
+          docker tag local-dsa-api:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/dsa-api:latest
+          docker push ghcr.io/${{ github.repository_owner }}/dsa-api:latest
