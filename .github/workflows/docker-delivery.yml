@@ -25,7 +25,7 @@ jobs:
         shell: bash
 
       - name: Log Version
-        run: | 
+        run: |
           echo "Calculated Version is ${{ steps.semver.outputs.version }}"
           echo "Should Release: ${{ steps.semver.outputs.should_release }}"
 
@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
-          OWNER: '${{ github.repository_owner }}'
+          OWNER: "${{ github.repository_owner }}"
 
       # 2. Build
       - name: Build Local Image
@@ -46,11 +46,11 @@ jobs:
         if: steps.semver.outputs.should_release == 'true'
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'local-dsa-api:${{ github.sha }}'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1' # Block push if OS is vulnerable
+          scan-type: "image"
+          image-ref: "local-dsa-api:${{ github.sha }}"
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Block push if OS is vulnerable
 
       # 4. Login & Push
       - name: Login to GHCR
@@ -65,11 +65,11 @@ jobs:
         if: steps.semver.outputs.should_release == 'true'
         run: |
           VERSION=${{ steps.semver.outputs.version }}
-          
+
           # Push Versioned Tag
           docker tag local-dsa-api:${{ github.sha }} ghcr.io/${{ env.OWNER_LC }}/dsa-api:$VERSION
           docker push ghcr.io/${{ env.OWNER_LC }}/dsa-api:$VERSION
-          
+
           # Push Latest Tag
           docker tag local-dsa-api:${{ github.sha }} ghcr.io/${{ env.OWNER_LC }}/dsa-api:latest
           docker push ghcr.io/${{ env.OWNER_LC }}/dsa-api:latest

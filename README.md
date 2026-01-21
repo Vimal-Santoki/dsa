@@ -45,6 +45,23 @@ The GitHub Actions pipeline is architected with strict dependencies:
 4.  **Secure Delivery:**
     - Artifacts are only pushed to **GitHub Container Registry (GHCR)** if _all_ previous security and quality gates pass.
 
+### Smart Versioning & Release Strategy
+
+This project uses a custom, dependency-free **Smart Release** strategy to automate semantic versioning and reduce registry noise.
+
+1.  **Smart Release Gating:** The pipeline (`docker-delivery.yml`) analyzes commits and **only** releases a new container version if functional changes are detected.
+    - **Artifacts Released:** If commits contain `feat`, `fix`, `perf`, or `refactor`.
+    - **Release Skipped:** If commits are only `docs`, `chore`, `test`, or `ci`. (Saves CI minutes & storage).
+
+2.  **Semantic Versioning:** Version numbers are calculated automatically based on [Conventional Commits](https://www.conventionalcommits.org/).
+
+| Commit Type | Impact | Example | Result |
+| :--- | :--- | :--- | :--- |
+| `BREAKING CHANGE:` | **Major** | `feat!: drop support for v1` | `1.2.0` -> `2.0.0` |
+| `feat:` | **Minor** | `feat: add quicksort alg` | `1.2.0` -> `1.3.0` |
+| `fix:` / `perf:` | **Patch** | `fix: off-by-one error` | `1.2.1` -> `1.2.2` |
+| `docs:` / `chore:` | **None** | `docs: update readme` | **No Release** |
+
 ---
 
 ## 🧪 Testing Pyramid Strategy

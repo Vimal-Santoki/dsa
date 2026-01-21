@@ -5,7 +5,20 @@ set -e
 git fetch --tags --force > /dev/null 2>&1
 
 # 1. Get the latest tag (e.g., v1.0.2), default to v0.0.0 if none
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+LAST_TAG_REF=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+if [ -z "$LAST_TAG_REF" ]; then
+    # No tags found. Default to v0.0.0 and fetch all logs.
+    LAST_TAG="v0.0.0"
+    echo "No tags found. Analyzing full history from HEAD."
+    LOGS=$(git log HEAD --pretty=%B)
+else
+    # Tag found. Use it as reference.
+    LAST_TAG=$LAST_TAG_REF
+    echo "Found tag: $LAST_TAG. Analyzing commits from $LAST_TAG to HEAD."
+    LOGS=$(git log $LAST_TAG..HEAD --pretty=%B)
+fi
+
 echo "Previous Version: $LAST_TAG"
 
 # Remove 'v' prefix
