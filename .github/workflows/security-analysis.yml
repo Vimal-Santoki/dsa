@@ -1,0 +1,45 @@
+name: Security Analysis Module
+
+on:
+  workflow_call:
+
+jobs:
+  security-analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Required for CodeQL
+      actions: read
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # A. TRIVY (Fast Secrets/Config Scan)
+      - name: Run Trivy (Filesystem)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          skip-dirs: "tests"
+          ignore-unfixed: true
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Block build if secrets found
+
+      # B. CODEQL (Deep Logic Scan)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+
+      # CodeQL needs to see the build happen to analyze it
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build for CodeQL
+        run: dotnet build DSA.sln --configuration Release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

@@ -1,0 +1,23 @@
+name: Test Suite Module
+
+on:
+  workflow_call:
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore DSA.sln
+
+      - name: Unit Tests
+        run: dotnet test tests/DSA.UnitTests/DSA.UnitTests.csproj --no-restore --verbosity normal
+
+      - name: Integration Tests
+        run: dotnet test tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj --no-restore --verbosity normal
