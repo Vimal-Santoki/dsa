@@ -30,9 +30,7 @@ major=${major:-0}
 minor=${minor:-0}
 patch=${patch:-0}
 
-# 2. Analyze commits since last tag
-LOGS=$(git log $LAST_TAG..HEAD --pretty=%B)
-
+# 2. Analyze commits (Logs were fetched in step 1)
 # Priority: 3=Major, 2=Minor, 1=Patch, 0=None
 BUMP_LEVEL=0
 

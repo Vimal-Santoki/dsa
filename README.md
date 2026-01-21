@@ -55,12 +55,12 @@ This project uses a custom, dependency-free **Smart Release** strategy to automa
 
 2.  **Semantic Versioning:** Version numbers are calculated automatically based on [Conventional Commits](https://www.conventionalcommits.org/).
 
-| Commit Type | Impact | Example | Result |
-| :--- | :--- | :--- | :--- |
+| Commit Type        | Impact    | Example                      | Result             |
+| :----------------- | :-------- | :--------------------------- | :----------------- |
 | `BREAKING CHANGE:` | **Major** | `feat!: drop support for v1` | `1.2.0` -> `2.0.0` |
-| `feat:` | **Minor** | `feat: add quicksort alg` | `1.2.0` -> `1.3.0` |
-| `fix:` / `perf:` | **Patch** | `fix: off-by-one error` | `1.2.1` -> `1.2.2` |
-| `docs:` / `chore:` | **None** | `docs: update readme` | **No Release** |
+| `feat:`            | **Minor** | `feat: add quicksort alg`    | `1.2.0` -> `1.3.0` |
+| `fix:` / `perf:`   | **Patch** | `fix: off-by-one error`      | `1.2.1` -> `1.2.2` |
+| `docs:` / `chore:` | **None**  | `docs: update readme`        | **No Release**     |
 
 ---
 
