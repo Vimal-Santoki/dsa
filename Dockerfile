@@ -22,6 +22,9 @@ RUN dotnet publish "DSA.Api.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
+# Create a non-root user
+USER app
+
 COPY --from=publish /app/publish .
 
 ENTRYPOINT ["dotnet", "DSA.Api.dll"]

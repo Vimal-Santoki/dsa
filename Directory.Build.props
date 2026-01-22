@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <!-- Metadata -->
+    <Authors>Vimal</Authors>
+    <Company>Vimal</Company>
+    <Copyright>Copyright (c) 2026</Copyright>
+
+    <!-- Language & Framework Standards -->
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Code Quality & Strictness (The Principal Touch) -->
+    <AnalysisLevel>latest-all</AnalysisLevel> <!-- Enables all newest analyzers -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild> <!-- Fails build on style violations -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors> <!-- Zero tolerance for warnings -->
+    
+    <!-- Deterministic Builds (for reproducible CI/CD) -->
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>
