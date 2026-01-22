@@ -1,20 +1,20 @@
 version: 2
 updates:
-  # Maintain NuGet dependencies
-  - package-ecosystem: "nuget"
-    directory: "/" 
-    schedule:
-      interval: "weekly"
-    groups:
-      dependencies:
-        patterns:
-          - "*" 
-    commit-message:
-      prefix: "fix" # Semantic commit standard
-      include: "scope"
+    # Maintain NuGet dependencies
+    - package-ecosystem: "nuget"
+      directory: "/"
+      schedule:
+          interval: "weekly"
+      groups:
+          dependencies:
+              patterns:
+                  - "*"
+      commit-message:
+          prefix: "fix" # Semantic commit standard
+          include: "scope"
 
-  # Maintain Docker Base Images
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+    # Maintain Docker Base Images
+    - package-ecosystem: "docker"
+      directory: "/"
+      schedule:
+          interval: "weekly"
