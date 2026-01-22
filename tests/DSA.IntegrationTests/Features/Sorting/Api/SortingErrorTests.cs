@@ -1,15 +1,17 @@
-﻿using NSubstitute;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using NSubstitute;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
 {
-    public class SortingErrorTests : IClassFixture<SortingApiFactory>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider usage of internal types", Justification = "xUnit requirement")]
+    public sealed class SortingErrorTests : IClassFixture<SortingApiFactory>
     {
         readonly SortingApiFactory _factory;
         readonly HttpClient _client;
 
         public SortingErrorTests(SortingApiFactory factory)
         {
+            ArgumentNullException.ThrowIfNull(factory);
             _factory = factory;
             _client = _factory.CreateClient();
         }
@@ -23,7 +25,7 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
             // Setup the mock to throw an exception when Sort is called
             _factory.SortAlgorithmMock
                 .When(a => a.Sort(Arg.Any<int[]>()))
-                .Do(x => { throw new Exception("Database global failure"); });
+                .Do(x => { throw new InvalidOperationException("Database global failure"); });
             // Act
             var response = await _client.PostAsJsonAsync($"/api/sort/{algorithm}", dataToSort);
             // Assert

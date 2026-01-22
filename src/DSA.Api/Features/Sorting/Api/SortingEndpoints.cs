@@ -1,10 +1,10 @@
-﻿using DSA.Api.Features.Sorting.Dto;
+using DSA.Api.Features.Sorting.Dto;
 using DSA.Api.Features.Sorting.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DSA.Api.Features.Sorting.Api
 {
-    public static class SortingEndpoints
+    internal static class SortingEndpoints
     {
         public static void MapSortingEndpoints(this IEndpointRouteBuilder app)
         {

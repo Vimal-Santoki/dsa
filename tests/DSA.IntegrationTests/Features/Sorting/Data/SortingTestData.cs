@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DSA.IntegrationTests.Features.Sorting.Data
 {
-    public class SortingTestData : IEnumerable<object[]>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via xUnit")]
+    internal sealed class SortingTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -22,7 +23,7 @@ namespace DSA.IntegrationTests.Features.Sorting.Data
             yield return new object[] { new int[] { 10 }, new int[] { 10 } };
 
             // empty array
-            yield return new object[] { new int[] { }, new int[] { } };
+            yield return new object[] { Array.Empty<int>(), Array.Empty<int>() };
 
             // repetitive elements
             yield return new object[] { new int[] { 2, 2, 2 }, new int[] { 2, 2, 2 } };
@@ -34,10 +35,10 @@ namespace DSA.IntegrationTests.Features.Sorting.Data
             yield return new object[] { new int[] { 3, 2, 1 }, new int[] { 2, 3, 4 } };
 
             // large dataset
-            int largeInputCount = 10000;
+            var largeInputCount = 10000;
             var largeInput = new int[largeInputCount];
             var largeExpected = new int[largeInputCount];
-            for (int i = 0; i < largeInputCount; i++)
+            for (var i = 0; i < largeInputCount; i++)
             {
                 largeInput[i] = largeInputCount - i;
                 largeExpected[i] = i + 1;

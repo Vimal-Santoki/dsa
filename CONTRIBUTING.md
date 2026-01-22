@@ -13,6 +13,6 @@ First off, thanks for taking the time to contribute! 🎉
 
 ## Development Standards
 
--   **Structure:** Follow the Vertical Slice Architecture in `src/DSA.Api/Features`.
--   **Tests:** Every new feature must have Unit Tests and Integration Tests.
--   **Code Style:** The project enforces StyleCop rules via `Directory.Build.props`. Ensure you have no warnings.
+- **Structure:** Follow the Vertical Slice Architecture in `src/DSA.Api/Features`.
+- **Tests:** Every new feature must have Unit Tests and Integration Tests.
+- **Code Style:** The project enforces StyleCop rules via `Directory.Build.props`. Ensure you have no warnings.

@@ -1,4 +1,4 @@
-﻿using DSA.Api.Features.Sorting.Interfaces;
+using DSA.Api.Features.Sorting.Interfaces;
 
 namespace DSA.Api.Features.Sorting.Algorithms
 {
@@ -7,22 +7,23 @@ namespace DSA.Api.Features.Sorting.Algorithms
     /// Time Complexity: O(n^2) Average/Worst, O(n) Best Case (Optimized).
     /// Space Complexity: O(1) In-place.
     /// </summary>
-    public class BubbleSort : ISortAlgorithm
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via DI")]
+    internal sealed class BubbleSort : ISortAlgorithm
     {
         public string Name => "Bubble Sort";
         public string Code => "BubbleSort";
 
         public int Sort(int[] array)
         {
-            bool swapped = false;
-            int iterations = 0;
+            var swapped = false;
+            var iterations = 0;
 
             // Outer loop: Each pass bubbles the largest element to the end.
-            for (int i = 0; i < array.Length - 1; i++)
+            for (var i = 0; i < array.Length - 1; i++)
             {
                 swapped = false;
                 // Optimization: We subtract 'i' because the last 'i' elements are already sorted.
-                for (int j = 0; j < array.Length - i - 1; j++)
+                for (var j = 0; j < array.Length - i - 1; j++)
                 {
                     iterations++;
                     if (array[j] > array[j + 1])

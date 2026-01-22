@@ -1,6 +1,6 @@
-﻿namespace DSA.Api.Features.Sorting.Interfaces
+namespace DSA.Api.Features.Sorting.Interfaces
 {
-    public interface ISortAlgorithm
+    internal interface ISortAlgorithm
     {
         /// <summary>
         /// The friendly display name of the algorithm (e.g. "Bubble Sort").

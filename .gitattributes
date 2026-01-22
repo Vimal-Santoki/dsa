@@ -1,0 +1,19 @@
+# Auto-detect text files and perform LF normalization
+* text=auto
+
+# Custom for Visual Studio
+*.cs     text=auto diff=csharp
+*.sln    text=auto merge=union
+*.csproj text=auto merge=union
+
+# Preserve specific files
+*.sh     text eol=lf
+*.cmd    text eol=crlf
+*.bat    text eol=crlf
+
+# Binary files
+*.dll binary
+*.pdb binary
+*.exe binary
+*.png binary
+*.jpg binary

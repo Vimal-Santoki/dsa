@@ -1,5 +1,10 @@
-﻿using DSA.Api.Features.Sorting.Api;
+using System.Runtime.CompilerServices;
+using DSA.Api.Features.Sorting.Api;
 using DSA.Api.Features.Sorting.Extensions;
+
+[assembly: InternalsVisibleTo("DSA.UnitTests")]
+[assembly: InternalsVisibleTo("DSA.IntegrationTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] // For NSubstitute
 
 // .NET 9 provides out of the box class and main method support. The below code is equivalent to having a Main method.
 
@@ -27,4 +32,5 @@ app.MapSortingEndpoints();
 
 app.Run();
 
-public partial class Program { } // For integration testing purposes
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider usage of internal types", Justification = "Public for Integration Tests")]
+public partial class Program { } // Make Program public for Integration Tests

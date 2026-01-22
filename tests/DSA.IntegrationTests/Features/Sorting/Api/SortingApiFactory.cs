@@ -6,19 +6,23 @@ using NSubstitute;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
 {
-    public class SortingApiFactory:WebApplicationFactory<Program>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider usage of internal types", Justification = "xUnit Fixture must be public")]
+    public sealed class SortingApiFactory : WebApplicationFactory<Program>
     {
-        public ISortAlgorithm SortAlgorithmMock { get; private set; } 
+        internal ISortAlgorithm SortAlgorithmMock { get; private set; } = default!;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            ArgumentNullException.ThrowIfNull(builder);
+
             builder.ConfigureServices(services =>
             {
                 // find the existing registration and remove it
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(ISortAlgorithm));
 
-                if (descriptor != null) { 
+                if (descriptor != null)
+                {
                     services.Remove(descriptor);
                 }
 

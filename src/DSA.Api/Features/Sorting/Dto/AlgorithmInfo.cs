@@ -1,9 +1,9 @@
-﻿namespace DSA.Api.Features.Sorting.Dto
+namespace DSA.Api.Features.Sorting.Dto
 {
-    public class AlgorithmInfo
+    internal sealed class AlgorithmInfo
     {
-        public string Code { get; set; }
-        public string DisplayName { get; set; }
-        public string Category { get; set; }
+        public string? Code { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Category { get; set; }
     }
 }

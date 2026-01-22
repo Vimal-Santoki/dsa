@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DSA.UnitTests.Features.Sorting.Data
 {
-    public class BubbleSortTestData : IEnumerable<object[]>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via xUnit reflection")]
+    internal sealed class BubbleSortTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -22,7 +23,7 @@ namespace DSA.UnitTests.Features.Sorting.Data
             yield return new object[] { new int[] { 10 }, new int[] { 10 } };
 
             // empty array
-            yield return new object[] { new int[] { }, new int[] { } };
+            yield return new object[] { Array.Empty<int>(), Array.Empty<int>() };
 
             // repetitive elements
             yield return new object[] { new int[] { 2, 2, 2 }, new int[] { 2, 2, 2 } };
@@ -34,7 +35,7 @@ namespace DSA.UnitTests.Features.Sorting.Data
             yield return new object[] { new int[] { 3, 2, 1 }, new int[] { 1, 2, 3 } };
 
             // large dataset
-            int largeInputCount = 10000;
+            var largeInputCount = 10000;
             var largeExpected = Enumerable.Range(1, largeInputCount).ToArray();
             var largeInput = largeExpected.Shuffle().ToArray();
             yield return new object[] { largeInput, largeExpected };
