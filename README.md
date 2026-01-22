@@ -93,6 +93,12 @@ We implement a full testing pyramid to ensure confidence at every level:
 - **CI/CD:** GitHub Actions
 - **Security Tools:** AquaSec Trivy, GitHub CodeQL
 
+## 🤝 Community & Support
+
+- **Contributing:** Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting a PR.
+- **Security:** Found a vulnerability? See our [Security Policy](SECURITY.md).
+- **Code of Conduct:** We pledge to foster an open and welcoming environment. Read our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## 🚀 Getting Started
 
 ### Local Development

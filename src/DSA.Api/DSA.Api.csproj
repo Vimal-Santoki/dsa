@@ -4,6 +4,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>14.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- API Metadata -->
+    <Description>Enterprise-grade Reference Implementation of Data Structures &amp; Algorithms API</Description>
+    <PackageTags>dsa;sorting;algorithms;clean-architecture;dotnet-10</PackageTags>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
