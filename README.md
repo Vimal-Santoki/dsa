@@ -28,6 +28,12 @@ Instead of the traditional layered approach (Controllers/Services/Repositories),
 
 - **RFC 7807 Error Handling:** Global implementation of standard Problem Details for consistent client error parsing.
 - **Split Health Probes:** Dedicated `/health/live` (Liveness) and `/health/ready` (Readiness) endpoints for zero-downtime deployments.
+- **Resilience (Rate Limiting):** Implements **Partitioned Sliding Window** rate limiting (Token Bucket algorithm).
+  - Uses `Microsoft.AspNetCore.RateLimiting` middleware.
+  - Limits are partitioned by **IP Address** for anonymous users.
+  - Configurable windows (default: 100 req/min).
+  - Features smart bypass for `/health` checks to prevent self-DOS during load.
+  - Production-ready `ForwardedHeadersMiddleware` support for Proxy/LoadBalancer environments.
 
 ---
 

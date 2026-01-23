@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace DSA.IntegrationTests.SharedTests
+namespace DSA.IntegrationTests.SharedTests.Health
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider usage of internal types", Justification = "xUnit requirement")]
     public sealed class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
