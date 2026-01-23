@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace DSA.Api.Shared.HealthChecks
 {
-    internal static class HealthCheckExtension
+    internal static class HealthCheckExtensions
     {
         public static void AddAppHealthChecks(this IHostApplicationBuilder builder)
         {
@@ -36,7 +36,7 @@ namespace DSA.Api.Shared.HealthChecks
             });
             app.MapHealthChecks("/health/ready", new HealthCheckOptions
             {
-                Predicate = (check) => check.Tags.Contains("ready")
+                Predicate = (check) => true // Include all checks for readiness
             });
         }
     }

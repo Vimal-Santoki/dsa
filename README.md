@@ -24,6 +24,11 @@ Instead of the traditional layered approach (Controllers/Services/Repositories),
 - **Minimal APIs:** Utilizing lightweight route builders with `TypedResults` for type-safe, high-performance HTTP responses.
 - **Native OpenAPI:** using the built-in Microsoft OpenAPI generator for standard compliance without heavy third-party dependencies.
 
+### 4. Operational Excellence
+
+- **RFC 7807 Error Handling:** Global implementation of standard Problem Details for consistent client error parsing.
+- **Split Health Probes:** Dedicated `/health/live` (Liveness) and `/health/ready` (Readiness) endpoints for zero-downtime deployments.
+
 ---
 
 ## 🛡️ Security & DevOps (Shift-Left)
