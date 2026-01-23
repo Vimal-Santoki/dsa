@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.AddHealthMonitoring();
+builder.AddAppHealthChecks();
 builder.AddSortingFeature();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.MapHealthMonitoring();
+app.MapAppHealthChecks();
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapSortingEndpoints();
