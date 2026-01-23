@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using DSA.Api.Features.Sorting.Api;
 using DSA.Api.Features.Sorting.Extensions;
+using DSA.Api.Shared;
+using DSA.Api.Shared.HealthChecks;
 
 [assembly: InternalsVisibleTo("DSA.UnitTests")]
 [assembly: InternalsVisibleTo("DSA.IntegrationTests")]
@@ -9,11 +11,20 @@ using DSA.Api.Features.Sorting.Extensions;
 // .NET 9 provides out of the box class and main method support. The below code is equivalent to having a Main method.
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add global global exception handler and problem details middleware
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.AddAppHealthChecks();
 builder.AddSortingFeature();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -26,6 +37,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.MapAppHealthChecks();
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapSortingEndpoints();

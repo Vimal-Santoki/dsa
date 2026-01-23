@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
@@ -30,6 +31,12 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
             var response = await _client.PostAsJsonAsync($"/api/sort/{algorithm}", dataToSort);
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.InternalServerError, response.StatusCode);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            Assert.NotNull(problemDetails);
+            Assert.Equal("An unexpected error occurred.", problemDetails.Title);
+            Assert.Equal(500, problemDetails.Status);
+            Assert.Equal("Database global failure", problemDetails.Detail);
         }
     }
 }
