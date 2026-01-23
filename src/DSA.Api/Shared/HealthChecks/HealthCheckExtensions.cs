@@ -3,9 +3,9 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace DSA.Api.Shared.HealthChecks
 {
-    internal static class HealthCheckExtensions
+    internal static class HealthCheckSetup
     {
-        public static void AddAppHealthChecks(this IHostApplicationBuilder builder)
+        public static void AddHealthMonitoring(this IHostApplicationBuilder builder)
         {
             builder.Services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]); // Liveness probe, indicates if the app is running
@@ -28,7 +28,7 @@ namespace DSA.Api.Shared.HealthChecks
             // Additional health checks can be added here as application grows ie. external service dependencies
         }
 
-        public static void MapAppHealthChecks(this WebApplication app)
+        public static void MapHealthMonitoring(this WebApplication app)
         {
             app.MapHealthChecks("/health/live", new HealthCheckOptions
             {
