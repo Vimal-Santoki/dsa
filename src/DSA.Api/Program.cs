@@ -2,7 +2,9 @@ using System.Runtime.CompilerServices;
 using DSA.Api.Features.Sorting.Api;
 using DSA.Api.Features.Sorting.Extensions;
 using DSA.Api.Shared;
-using DSA.Api.Shared.HealthChecks;
+using DSA.Api.Shared.Health;
+using DSA.Api.Resilience;
+using Microsoft.AspNetCore.HttpOverrides;
 
 [assembly: InternalsVisibleTo("DSA.UnitTests")]
 [assembly: InternalsVisibleTo("DSA.IntegrationTests")]
@@ -16,6 +18,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+builder.AddRateLimiting();
 builder.AddAppHealthChecks();
 builder.AddSortingFeature();
 
@@ -24,7 +34,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
+app.UseRateLimiting();
 
 if (app.Environment.IsDevelopment())
 {
