@@ -1,0 +1,36 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using DSA.Api.Common.Auth.Dto;
+using DSA.Api.Common.Auth.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace DSA.Api.Common.Auth.Api
+{
+    internal static class TokenEndpoints
+    {
+        public static void MapTokenEndpoints(this WebApplication app)
+        {
+            app.MapPost("/connect/token", GetToken)
+                .WithTags("Auth")
+                .AllowAnonymous()
+                .Produces<TokenResponse>(200)
+                .Produces(401);
+        }
+
+        static async Task<IResult> GetToken([FromBody] Dto.LoginRequest request, [FromServices] IIdentityService identityService)
+        {
+            var result = await identityService.LoginAsync(request);
+
+            if (result is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            return Results.Ok(result);
+        }
+    }
+}

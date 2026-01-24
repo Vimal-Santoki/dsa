@@ -1,10 +1,14 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using DSA.Api.Common.Auth.Dto;
+using DSA.Api.Common.Resilience.Dto;
+using DSA.IntegrationTests.Common.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using DSA.Api.Resilience;
 
 namespace DSA.IntegrationTests.SharedTests.Resilience
 {
@@ -36,6 +40,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         {
             
             var client = _factory.CreateClient();
+            await client.AuthenticateAsync();
             var endpoint = new Uri("/api/sort", UriKind.Relative);
             
             // Unique IP
@@ -52,6 +57,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         public async Task Rate_Limiting_Should_Enforce_Limits()
         {
             var client = _factory.CreateClient();
+            await client.AuthenticateAsync();
             var endpoint = new Uri("/api/sort", UriKind.Relative);
             
             // Unique IP
@@ -72,6 +78,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         public async Task Rate_Limiting_Should_Reset_After_Interval()
         {
             var client = _factory.CreateClient();
+            await client.AuthenticateAsync();
             var endpoint = new Uri("/api/sort", UriKind.Relative);
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.52");
 
@@ -93,6 +100,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         public async Task Health_Endpoints_Should_Bypass_Rate_Limit()
         {
             var client = _factory.CreateClient();
+            await client.AuthenticateAsync();
             var endpoint = new Uri("/health/ready", UriKind.Relative);
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.53");
             

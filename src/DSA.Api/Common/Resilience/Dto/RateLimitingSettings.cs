@@ -1,4 +1,4 @@
-namespace DSA.Api.Resilience;
+namespace DSA.Api.Common.Resilience.Dto;
 
 internal sealed class RateLimitingSettings
 {

@@ -1,7 +1,8 @@
 using System.Threading.RateLimiting;
+using DSA.Api.Common.Resilience.Dto;
 using Microsoft.Extensions.Options;
 
-namespace DSA.Api.Resilience
+namespace DSA.Api.Common.Resilience.Extensions
 {
     internal static class RateLimitingExtensions
     {
