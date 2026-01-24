@@ -35,6 +35,13 @@ Instead of the traditional layered approach (Controllers/Services/Repositories),
   - Features smart bypass for `/health` checks to prevent self-DOS during load.
   - Production-ready `ForwardedHeadersMiddleware` support for Proxy/LoadBalancer environments.
 
+### 5. Principal-Grade Security
+
+- **Secure by Default:** Utilizing `.NET 8+` Global Fallback Policy. All endpoints effectively require `[Authorize]` unless explicitly marked `.AllowAnonymous()`.
+- **Vertical Slice Auth:** Authentication logic is isolated in `Common/Auth` with a clean `IIdentityService` abstraction.
+- **Mock-Issuer Pattern:** Configured to issue self-signed JWTs for strictly-typed, effortless local development and testing without external IdP dependencies.
+- **Standard Pipeline:** Correct middleware sequencing (`ForwardedHeaders` -> `RateLimiting` -> `AuthN` -> `AuthZ`).
+
 ---
 
 ## 🛡️ Security & DevOps (Shift-Left)
@@ -107,16 +114,31 @@ We implement a full testing pyramid to ensure confidence at every level:
 ## 🤝 Community & Support
 
 - **Contributing:** Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting a PR.
-- **Security:** Found a vulnerability? See our [Security Policy](SECURITY.md).
-- **Code of Conduct:** We pledge to foster an open and welcoming environment. Read our [Code of Conduct](CODE_OF_CONDUCT.md).
+1. **Start the API:**
+   ```bash
+   dotnet run --project src/DSA.Api/DSA.Api.csproj
+   ```
 
-## 🚀 Getting Started
+2. **Authenticate (Get Token):**
+   The API is secured. You must obtain a JWT to call endpoints.
+   ```bash
+   # POST to /connect/token
+   curl -X POST http://localhost:5000/connect/token \
+     -H "Content-Type: application/json" \
+     -d '{"username":"admin", "password":"password"}'
+   ```
 
-### Local Development
+3. **Call Feature Endpoint:**
+   ```bash
+   # Use the token from step 2
+   curl -X GET http://localhost:5000/api/sort \
+     -H "Authorization: Bearer <YOUR_TOKEN>"
+   ```
 
-```bash
-# Restore dependencies
-dotnet restore
+### Running Tests
+   ```bash
+   dotnet test
+   dotnet restore
 
 # Run Tests
 dotnet test

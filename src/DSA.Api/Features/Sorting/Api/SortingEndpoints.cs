@@ -1,3 +1,4 @@
+using DSA.Api.Features.Sorting.Algorithms;
 using DSA.Api.Features.Sorting.Dto;
 using DSA.Api.Features.Sorting.Interfaces;
 using Microsoft.AspNetCore.Mvc;

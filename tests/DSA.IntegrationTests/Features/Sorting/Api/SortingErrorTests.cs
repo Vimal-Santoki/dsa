@@ -1,11 +1,14 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using DSA.Api.Common.Auth.Dto;
+using DSA.IntegrationTests.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider usage of internal types", Justification = "xUnit requirement")]
-    public sealed class SortingErrorTests : IClassFixture<SortingApiFactory>
+    public sealed class SortingErrorTests : IClassFixture<SortingApiFactory>, IAsyncLifetime
     {
         readonly SortingApiFactory _factory;
         readonly HttpClient _client;
@@ -16,6 +19,10 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
             _factory = factory;
             _client = _factory.CreateClient();
         }
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        public async Task InitializeAsync() => await _client.AuthenticateAsync();
 
         [Fact]
         public async Task RunSortAlgorithm_Should_Return_500_When_Algorithm_Crashes()

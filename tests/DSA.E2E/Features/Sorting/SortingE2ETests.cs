@@ -1,9 +1,11 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using DSA.E2E.Extensions;
 using Xunit;
 
 namespace DSA.E2E.Features.Sorting
 {
-    public sealed class SortingE2ETests : IDisposable
+    public sealed class SortingE2ETests : IDisposable, IAsyncLifetime
     {
         private readonly HttpClient _client;
         private static readonly int[] _testArray = [5, 3, 8, 1, 2];
@@ -68,5 +70,9 @@ namespace DSA.E2E.Features.Sorting
         {
             _client?.Dispose();
         }
+
+        public async Task InitializeAsync() => await _client.AuthenticateAsync();
+
+        public Task DisposeAsync() => Task.CompletedTask;
     }
 }

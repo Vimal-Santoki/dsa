@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DSA.Api.Shared
+namespace DSA.Api.Common
 {
     internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     {
