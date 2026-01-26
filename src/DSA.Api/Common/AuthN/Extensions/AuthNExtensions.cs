@@ -1,15 +1,15 @@
 using System.Text;
-using DSA.Api.Common.Auth.Interfaces;
-using DSA.Api.Common.Auth.Services;
+using DSA.Api.Common.AuthN.Interfaces;
+using DSA.Api.Common.AuthN.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DSA.Api.Common.Auth.Extensions
+namespace DSA.Api.Common.AuthN.Extensions
 {
-    internal static class AuthExtensions
+    internal static class AuthNExtensions
     {
-        public static void AddAuth(this IHostApplicationBuilder builder)
+        public static void AddAuthN(this IHostApplicationBuilder builder)
         {
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
             builder.Services.AddScoped<IIdentityService, MockIdentityService>();

@@ -1,12 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using DSA.Api.Common.Auth.Dto;
-using DSA.Api.Common.Auth.Interfaces;
+using DSA.Api.Common.AuthN.Dto;
+using DSA.Api.Common.AuthN.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DSA.Api.Common.Auth.Services
+namespace DSA.Api.Common.AuthN.Services
 {
     internal class MockIdentityService : IIdentityService
     {
@@ -18,11 +18,21 @@ namespace DSA.Api.Common.Auth.Services
         public Task<TokenResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
         {
             // Mock user validation. We will replace this with real user creds from db later.
-            var userName = "admin";
-            var password = "password";
-            var claimSub = "user-123"; // This would typically be the user's unique ID from the database.
+            var claimSub = "";
+            var isValid = false;
 
-            if (request.Username != userName || request.Password != password)
+            if (request.Username == "admin" && request.Password == "password")
+            {
+                isValid = true;
+                claimSub = "user-123";
+            }
+            else if (request.Username == "guest" && request.Password == "guest")
+            {
+                isValid = true;
+                claimSub = "user-456";
+            }
+
+            if (!isValid)
             {
                 return Task.FromResult<TokenResponse?>(null);
             }

@@ -1,12 +1,17 @@
-using DSA.Api.Features.Sorting.Algorithms;
+using DSA.Api.Common.AuthZ.Dto;
+using DSA.Api.Common.AuthZ.Extensions;
 using DSA.Api.Features.Sorting.Dto;
 using DSA.Api.Features.Sorting.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using DSA.Api.Common.Iam.Constants;
 
 namespace DSA.Api.Features.Sorting.Api
 {
     internal static class SortingEndpoints
     {
+        const string listPermission = AppPermissions.Sorting.List;
+        const string executePermission = AppPermissions.Sorting.Execute;
         public static void MapSortingEndpoints(this IEndpointRouteBuilder app)
         {
             var group = app.MapGroup("/api/sort")
@@ -14,21 +19,23 @@ namespace DSA.Api.Features.Sorting.Api
 
 
             group.MapGet("/", GetAlgorithms)
-                .Produces<IEnumerable<AlgorithmInfo>>(200);
+                .RequirePermission(listPermission, "Sorting"); // authenticated user x can list all sorting algorithms if they have permission
 
             // algorithm post
             group.MapPost("/{algorithm}", RunSortAlgorithm)
-                .Produces<SortResult>(200)
-                .Produces(404);
+                .RequirePermission(executePermission, RouteParam.From("algorithm")); // authenticated user x can execute sorting algorithm y if they have permission
         }
 
-       public static IResult RunSortAlgorithm([FromRoute] string algorithm, [FromBody] int[] data, [FromServices] IEnumerable<ISortAlgorithm> sortAlgorithms)
+        public static Results<Ok<SortResult>, NotFound<string>, BadRequest<string>> RunSortAlgorithm(
+            [FromRoute] string algorithm, 
+            [FromBody] int[] data,
+            [FromServices] IEnumerable<ISortAlgorithm> sortAlgorithms)
         {
             try
             {
                 if (data == null)
                 {
-                    return Results.BadRequest("Data array cannot be null.");
+                    return TypedResults.BadRequest("Data array cannot be null.");
                 }
 
                 var selectedAlgorithm = sortAlgorithms.FirstOrDefault(a =>
@@ -36,11 +43,11 @@ namespace DSA.Api.Features.Sorting.Api
 
                 if (selectedAlgorithm == null)
                 {
-                    return Results.NotFound($"Sorting algorithm '{algorithm}' not found.");
+                    return TypedResults.NotFound($"Sorting algorithm '{algorithm}' not found.");
                 }
 
                 var iterations = selectedAlgorithm.Sort(data);
-                return Results.Ok(new SortResult
+                return TypedResults.Ok(new SortResult
                 {
                     Algorithm = selectedAlgorithm.Name,
                     Iterations = iterations,
@@ -49,11 +56,11 @@ namespace DSA.Api.Features.Sorting.Api
             }
             catch (ArgumentException ex)
             {
-                return Results.BadRequest(ex.Message);
+                return TypedResults.BadRequest(ex.Message);
             }
         }
 
-        public static IResult GetAlgorithms([FromServices] IEnumerable<ISortAlgorithm> sortAlgorithms)
+        public static Ok<IEnumerable<AlgorithmInfo>> GetAlgorithms([FromServices] IEnumerable<ISortAlgorithm> sortAlgorithms)
         {
             var response = sortAlgorithms.Select(a =>
             new AlgorithmInfo
@@ -62,7 +69,7 @@ namespace DSA.Api.Features.Sorting.Api
                 DisplayName = a.Name,
                 Category = a.Category
             });
-            return Results.Ok(response);
+            return TypedResults.Ok(response);
         }
     }
 }
