@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Text;
-using DSA.Api.Common.Auth.Dto;
+using DSA.Api.Common.AuthN.Dto;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 

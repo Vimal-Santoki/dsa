@@ -38,9 +38,11 @@ Instead of the traditional layered approach (Controllers/Services/Repositories),
 ### 5. Principal-Grade Security
 
 - **Secure by Default:** Utilizing `.NET 8+` Global Fallback Policy. All endpoints effectively require `[Authorize]` unless explicitly marked `.AllowAnonymous()`.
+- **Fine-Grained Authorization:** Implements an ABAC/RBAC hybrid model using `IEndpointFilter`. Security is declarative (`.RequirePermission(...)`), decoupling business logic from IAM concerns.
+- **Information Hiding:** Security failures intentionally return generic `403` or `404` responses to prevent internal logic leakage to attackers.
 - **Vertical Slice Auth:** Authentication logic is isolated in `Common/Auth` with a clean `IIdentityService` abstraction.
 - **Mock-Issuer Pattern:** Configured to issue self-signed JWTs for strictly-typed, effortless local development and testing without external IdP dependencies.
-- **Standard Pipeline:** Correct middleware sequencing (`ForwardedHeaders` -> `RateLimiting` -> `AuthN` -> `AuthZ`).
+- **Standard Pipeline:** Correct middleware sequencing (`ForwardedHeaders` -> `RateLimiting` -> `AuthN` -> `Authentication` -> `Authorization`).
 
 ---
 

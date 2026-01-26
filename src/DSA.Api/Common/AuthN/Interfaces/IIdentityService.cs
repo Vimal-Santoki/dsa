@@ -1,6 +1,6 @@
-using DSA.Api.Common.Auth.Dto;
+using DSA.Api.Common.AuthN.Dto;
 
-namespace DSA.Api.Common.Auth.Interfaces
+namespace DSA.Api.Common.AuthN.Interfaces
 {
     internal interface IIdentityService
     {

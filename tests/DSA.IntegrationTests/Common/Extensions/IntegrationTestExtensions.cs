@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
-using DSA.Api.Common.Auth.Dto;
 
 namespace DSA.IntegrationTests.Common.Extensions
 {

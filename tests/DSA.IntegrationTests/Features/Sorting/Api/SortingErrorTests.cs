@@ -1,6 +1,4 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DSA.Api.Common.Auth.Dto;
 using DSA.IntegrationTests.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;

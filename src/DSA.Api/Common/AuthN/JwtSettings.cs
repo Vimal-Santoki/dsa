@@ -1,4 +1,4 @@
-namespace DSA.Api.Common.Auth
+namespace DSA.Api.Common.AuthN
 {
     internal sealed class JwtSettings
     {

@@ -1,10 +1,7 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DSA.Api.Common.Auth.Dto;
 using DSA.Api.Features.Sorting.Dto;
 using DSA.IntegrationTests.Common.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
 {

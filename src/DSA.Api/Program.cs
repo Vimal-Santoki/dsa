@@ -6,8 +6,10 @@ using DSA.Api.Common.Health.Extensions;
 using DSA.Api.Common.Health.Api;
 using DSA.Api.Common;
 using DSA.Api.Common.Resilience.Extensions;
-using DSA.Api.Common.Auth.Extensions;
-using DSA.Api.Common.Auth.Api;
+using DSA.Api.Common.AuthN.Extensions;
+using DSA.Api.Common.AuthN.Api;
+using DSA.Api.Common.Iam.Extensions;
+using DSA.Api.Common.AuthZ.Extensions;
 
 [assembly: InternalsVisibleTo("DSA.UnitTests")]
 [assembly: InternalsVisibleTo("DSA.IntegrationTests")]
@@ -29,7 +31,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.AddRateLimiting();
-builder.AddAuth();
+builder.AddAuthN();
+builder.AddAuthZ();
+builder.AddIam();
 builder.AddHealthChecks();
 builder.AddSorting();
 
@@ -58,7 +62,7 @@ if (app.Environment.IsDevelopment())
 app.MapHealthCheckEndpoints();
 app.MapGet("/", () => Results.Redirect("/swagger")).AllowAnonymous();
 
-app.MapAuthEndpoints();
+app.MapAuthNEndpoints();
 app.MapSortingEndpoints();
 
 app.Run();
