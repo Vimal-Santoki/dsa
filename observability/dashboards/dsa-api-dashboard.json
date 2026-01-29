@@ -1,0 +1,86 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "schemaVersion": 38,
+  "style": "dark",
+  "title": "DSA: API Metrics (Throughput / P95 / Error%)",
+  "uid": "dsa-api-dashboard",
+  "version": 4,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Total API Throughput (ops/sec)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count[1m])) by (service_name)",
+          "legendFormat": "Total - {{service_name}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count[1m])) by (http_route)",
+          "legendFormat": "Route - {{http_route}}",
+          "hide": false,
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "heatmap", 
+      "title": "Latency Heatmap (with Exemplars)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)",
+          "format": "heatmap",
+          "exemplar": true,
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "color": {
+          "mode": "scheme",
+          "scheme": "Spectral",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)" 
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate % (Over Time)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"4..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m])) * 100",
+          "legendFormat": "4xx % (Global)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m])) * 100",
+          "legendFormat": "5xx % (Global)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    }
+  ],
+  "templating": { "list": [] },
+  "tags": ["DSA", "API", "metrics"]
+}

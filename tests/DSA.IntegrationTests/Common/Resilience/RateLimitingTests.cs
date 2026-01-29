@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -110,6 +111,57 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
+
+        //[Fact]
+        //public async Task Rate_Limiting_Should_Tag_Activity_For_Observability()
+        //{
+        //    // Arrange
+        //    var client = _factory.CreateClient();
+        //    await client.AuthenticateAsync();
+        //    var endpoint = new Uri("/api/sort", UriKind.Relative);
+
+        //    // Unique IP to ensure fresh bucket
+        //    client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.99");
+
+        //    // Exhaust the limit first
+        //    for (var i = 0; i < 105; i++)
+        //    {
+        //        await client.GetAsync(endpoint);
+        //    }
+
+        //    // Setup a "Spy" to capture the Activity
+        //    Activity? capturedActivity = null;
+        //    using var listener = new ActivityListener
+        //    {
+        //        ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
+        //        Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+        //        ActivityStopped = activity =>
+        //        {
+        //            // We look for the activity that handled the request
+        //            if (activity.Kind == ActivityKind.Server)
+        //            {
+        //                capturedActivity = activity;
+        //            }
+        //        }
+        //    };
+        //    ActivitySource.AddActivityListener(listener);
+
+        //    // Act: Trigger the 429
+        //    using var blockedResponse = await client.GetAsync(endpoint);
+
+        //    // Assert
+        //    Assert.Equal(HttpStatusCode.TooManyRequests, blockedResponse.StatusCode);
+
+        //    // CRITICAL: Verify the fix from ObservabilityExtensions works
+        //    Assert.NotNull(capturedActivity);
+
+        //    // Check for the specific tag we added manually
+        //    var statusCodeTag = capturedActivity.GetTagItem("http.response.status_code");
+        //    Assert.Equal(429, statusCodeTag); // "429" might be int or object depending on implementation, usually int.
+
+        //    // Check it is marked as Error
+        //    Assert.Equal(ActivityStatusCode.Error, capturedActivity.Status);
+        //}
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Do not catch general exception types", Justification = "Test code")]

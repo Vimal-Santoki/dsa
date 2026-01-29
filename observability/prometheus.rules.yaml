@@ -1,0 +1,60 @@
+groups:
+    - name: dsa-alerts
+      rules:
+          # 1. High Server Error Rate (> 1% 5xx)
+          - alert: APIHighServerErrorRate
+            expr: |
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m]))
+                  /
+                  sum(rate(http_server_request_duration_seconds_count[1m]))
+                ) * 100 > 1
+            for: 1m
+            labels:
+                severity: critical
+            annotations:
+                summary: "High 5xx Error Rate"
+                description: "5xx rate is {{ $value | humanize }}%."
+
+          # 2. High Client Error Rate (> 5% 4xx) -- SIMPLIFIED
+          - alert: APIHighClientErrorRate
+            expr: |
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"4.."}[1m]))
+                  /
+                  sum(rate(http_server_request_duration_seconds_count[1m]))
+                ) * 100 > 5
+            for: 0s # FIRE IMMEDIATELY
+            labels:
+                severity: warning
+            annotations:
+                summary: "High 4xx Error Rate (Rate Limits?)"
+                description: "4xx rate is {{ $value | humanize }}%."
+
+          # 3. High Latency (P95 > 2s)
+          - alert: APIHighLatency
+            expr: |
+                histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) > 2
+            for: 1m
+            labels:
+                severity: warning
+            annotations:
+                summary: "High Latency"
+                description: "P95 Latency is {{ $value | humanize }}s."
+
+          # 4. Instance Down
+          - alert: InstanceDown
+            expr: up == 0
+            for: 1m
+            labels:
+                severity: critical
+
+          # 5. DEBUG ALERT - ALWAYS FIRE
+          - alert: DebugAlertSystemActive
+            expr: vector(1) > 0
+            for: 0s
+            labels:
+                severity: info
+            annotations:
+                summary: "Alert System Active"
+                description: "If you see this, Prometheus is successfully evaluating rules."

@@ -18,5 +18,8 @@
     
     <!-- Deterministic Builds (for reproducible CI/CD) -->
     <Deterministic>true</Deterministic>
+
+    <!-- Suppress specific analyzer warnings -->
+    <NoWarn>$(NoWarn);CA1848</NoWarn>
   </PropertyGroup>
 </Project>

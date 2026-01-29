@@ -1,6 +1,7 @@
 namespace DSA.Api.Features.Sorting.Interfaces
 {
-    internal interface ISortAlgorithm
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Required for DispatchProxy generation")]
+    public interface ISortAlgorithm
     {
         /// <summary>
         /// The friendly display name of the algorithm (e.g. "Bubble Sort").

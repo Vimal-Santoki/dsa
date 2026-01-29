@@ -44,6 +44,15 @@ Instead of the traditional layered approach (Controllers/Services/Repositories),
 - **Mock-Issuer Pattern:** Configured to issue self-signed JWTs for strictly-typed, effortless local development and testing without external IdP dependencies.
 - **Standard Pipeline:** Correct middleware sequencing (`ForwardedHeaders` -> `RateLimiting` -> `AuthN` -> `Authentication` -> `Authorization`).
 
+### 6. Principal-Grade Observability
+
+- **OpenTelemetry-First:** Standardized on OTLP for all signals (Logs, Metrics, Traces), avoiding vendor lock-in.
+- **Deep Signal Correlation:**
+  - **Exemplars:** High-latency metric buckets are linked to specific Trace IDs (the "dots" on the heatmap), enabling one-click root cause analysis.
+  - **Trace-to-Log Linking:** Logs are enriched with TraceIDs and indexed via Loki Structured Metadata for seamless navigation from a distributed trace to its specific logs.
+- **Production-Ready Sampling:** Uses `TraceIdRatioBasedSampler` (10%) to balance visibility cost with statistical significance, rather than naive 100% or 0% approaches.
+- **Invisible Failure Detection:** Explicitly instruments Rate Limiting middleware to emit metrics for 429 (Too Many Requests) events, ensuring "silent" outages are visible on dashboards.
+
 ---
 
 ## 🛡️ Security & DevOps (Shift-Left)

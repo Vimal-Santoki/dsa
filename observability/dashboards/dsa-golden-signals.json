@@ -1,0 +1,72 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Algorithm Throughput (Ops/Sec)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(rate(dsa_algorithm_executions_ops_total[1m])) by (algorithm_code)",
+          "legendFormat": "{{__name__}} - {{algorithm_code}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Algorithm P95 Latency (ms)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "(histogram_quantile(0.95, sum(rate(dsa_algorithm_duration_ms_milliseconds_bucket[1m])) by (le, algorithm_code)) unless sum(rate(dsa_algorithm_duration_ms_milliseconds_bucket{le=\"+Inf\"}[1m])) by (algorithm_code) == 0) or (sum(rate(dsa_algorithm_duration_ms_milliseconds_bucket{le=\"+Inf\"}[1m])) by (algorithm_code) * 0)",
+          "legendFormat": "{{__name__}} - {{algorithm_code}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Algorithm Error Rate %",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "(sum(rate(dsa_algorithm_executions_ops_total{status=\"error\"}[1m])) by (algorithm_code) or (sum(rate(dsa_algorithm_executions_ops_total[1m])) by (algorithm_code) * 0)) / (sum(rate(dsa_algorithm_executions_ops_total[1m])) by (algorithm_code)) * 100",
+          "legendFormat": "Error Rate - {{algorithm_code}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["DSA", "Algorithm Dashboard"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "timezone": "",
+  "title": "DSA: Algorithm Dashboard",
+  "uid": "dsa-algorithm-dashboard",
+  "version": 5,
+  "weekStart": ""
+}

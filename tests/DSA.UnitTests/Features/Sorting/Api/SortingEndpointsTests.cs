@@ -2,6 +2,7 @@ using DSA.Api.Features.Sorting.Api;
 using DSA.Api.Features.Sorting.Dto;
 using DSA.Api.Features.Sorting.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace DSA.UnitTests.Features.Sorting.Api
@@ -25,7 +26,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         [Fact]
         public void RunSortAlgorithm_Should_Call_Sort_On_Matching_Algorithm()
         {
-            var result = SortingEndpoints.RunSortAlgorithm("MockSort", _defaultInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("MockSort", _defaultInput, _serviceList, NullLoggerFactory.Instance);
 
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
@@ -36,7 +37,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         [Fact]
         public void RunSortAlgorithm_Should_Return_NotFound_For_Invalid_Code()
         {
-            var result = SortingEndpoints.RunSortAlgorithm("InvalidCode", _defaultInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("InvalidCode", _defaultInput, _serviceList, NullLoggerFactory.Instance);
             Assert.IsType<NotFound<string>>(result.Result);
             _mockAlgo.DidNotReceive().Sort(Arg.Any<int[]>());
         }
@@ -45,7 +46,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         public void RunSortAlgorithm_Should_Return_BadRequest_On_Exception()
         {
             _mockAlgo.Sort(Arg.Any<int[]>()).Returns(x => { throw new ArgumentException("Invalid input"); });
-            var result = SortingEndpoints.RunSortAlgorithm("MockSort", _defaultInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("MockSort", _defaultInput, _serviceList, NullLoggerFactory.Instance);
             
             var badRequestResult = Assert.IsType<BadRequest<string>>(result.Result);
             Assert.NotNull(badRequestResult.Value);
@@ -79,7 +80,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         public void RunSortAlgorithm_Should_Handle_Empty_Input_Array()
         {
             var emptyInput = Array.Empty<int>();
-            var result = SortingEndpoints.RunSortAlgorithm("MockSort", emptyInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("MockSort", emptyInput, _serviceList, NullLoggerFactory.Instance);
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
@@ -92,7 +93,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         public void RunSortAlgorithm_Should_Handle_Large_Input_Array()
         {
             var largeInput = Enumerable.Range(1000, 1000).Reverse().ToArray();
-            var result = SortingEndpoints.RunSortAlgorithm("MockSort", largeInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("MockSort", largeInput, _serviceList, NullLoggerFactory.Instance);
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
@@ -103,7 +104,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         [Fact]
         public void RunSortAlgorithm_Should_Be_Case_Insensitive_For_Algorithm_Code()
         {
-            var result = SortingEndpoints.RunSortAlgorithm("mOcKsOrT", _defaultInput, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("mOcKsOrT", _defaultInput, _serviceList, NullLoggerFactory.Instance);
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
@@ -131,7 +132,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         public void RunSortAlgorithm_Should_Handle_Null_Input_Array()
         {
             int[]? nullInput = null;
-            var result = SortingEndpoints.RunSortAlgorithm("MockSort", nullInput!, _serviceList);
+            var result = SortingEndpoints.RunSortAlgorithm("MockSort", nullInput!, _serviceList, NullLoggerFactory.Instance);
             var badRequestResult = Assert.IsType<BadRequest<string>>(result.Result);
             Assert.NotNull(badRequestResult.Value);
             _mockAlgo.DidNotReceive().Sort(Arg.Any<int[]>());

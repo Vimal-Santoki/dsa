@@ -1,4 +1,6 @@
+using DSA.Api.Common.Extensions;
 using DSA.Api.Features.Sorting.Algorithms;
+using DSA.Api.Features.Sorting.Algorithms.Decorators;
 using DSA.Api.Features.Sorting.Interfaces;
 
 namespace DSA.Api.Features.Sorting.Extensions
@@ -7,7 +9,8 @@ namespace DSA.Api.Features.Sorting.Extensions
     {
         public static void AddSorting(this IHostApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<ISortAlgorithm, BubbleSort>();
+            builder.Services.AddDecorate<ISortAlgorithm, BubbleSort, ObservabilitySortDecorator>();
         }
     }
 }
+
