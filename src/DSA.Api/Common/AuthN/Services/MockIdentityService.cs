@@ -11,9 +11,12 @@ namespace DSA.Api.Common.AuthN.Services
     internal class MockIdentityService : IIdentityService
     {
         readonly IOptions<JwtSettings> _jwtSettings;
-        public MockIdentityService(IOptions<JwtSettings> jwtSettings)
+        readonly ILogger<MockIdentityService> _logger;
+
+        public MockIdentityService(IOptions<JwtSettings> jwtSettings, ILogger<MockIdentityService> logger)
         {
             _jwtSettings = jwtSettings;
+            _logger = logger;
         }
         public Task<TokenResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
         {
@@ -34,6 +37,7 @@ namespace DSA.Api.Common.AuthN.Services
 
             if (!isValid)
             {
+                _logger.LogWarning("Login failed for user: {Username}. Invalid credentials.", request.Username);
                 return Task.FromResult<TokenResponse?>(null);
             }
 

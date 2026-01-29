@@ -10,6 +10,8 @@ using DSA.Api.Common.AuthN.Extensions;
 using DSA.Api.Common.AuthN.Api;
 using DSA.Api.Common.Iam.Extensions;
 using DSA.Api.Common.AuthZ.Extensions;
+using DSA.Api.Common.Observability.Extensions;
+using DSA.Api.Common.Observability.Middleware;
 
 [assembly: InternalsVisibleTo("DSA.UnitTests")]
 [assembly: InternalsVisibleTo("DSA.IntegrationTests")]
@@ -35,6 +37,7 @@ builder.AddAuthN();
 builder.AddAuthZ();
 builder.AddIam();
 builder.AddHealthChecks();
+builder.AddObservability();
 builder.AddSorting();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -46,7 +49,7 @@ app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseRateLimiting();
 app.UseAuthentication();
-app.UseAuthorization();
+app.UseMiddleware<UserContextLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -58,6 +61,8 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "DSA Learning API");
     });
 }
+
+app.UseAuthorization();
 
 app.MapHealthCheckEndpoints();
 app.MapGet("/", () => Results.Redirect("/swagger")).AllowAnonymous();

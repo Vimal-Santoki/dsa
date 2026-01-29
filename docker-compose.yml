@@ -1,0 +1,66 @@
+services:
+  # 1. OpenTelemetry Collector (The Central Nervous System)
+  # Receives data from apps, processes it, and sends it to backends (Prometheus, Tempo)
+  otel-collector:
+    container_name: dsa-otel-collector
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+      - "8888:8888" # Prom endpoint for collector metrics
+      - "8889:8889" # Prom exporter endpoint (Prometheus scrapes this)
+
+  # 2. Prometheus (Metrics Database)
+  # Stores timeseries data (CPU, Memory, Request Counts, Latency histograms)
+  prometheus:
+    container_name: dsa-prometheus
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./observability/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./observability/prometheus.rules.yaml:/etc/prometheus/prometheus.rules.yaml
+    ports:
+      - "9090:9090"
+
+  # 3. Tempo (Distributed Tracing Backend)
+  # Stores traces to visualize request flows across services
+  tempo:
+    container_name: dsa-tempo
+    image: grafana/tempo:2.3.1   # <--- PINNED VERSION
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo.yaml
+      # - /tmp/tempo-data:/tmp/tempo  <--- COMMENT OUT ANY DATA VOLUME
+    ports:
+      - "3200:3200"
+      - "4317"    # OTLP gRPC (internal docker network only usually, but mapped for debug)
+
+  # 4. Grafana (Visualization Dashboard)
+  # The UI where we view everything
+  grafana:
+    container_name: dsa-grafana
+    image: grafana/grafana:latest
+    volumes:
+      - ./observability/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./observability/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./observability/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+
+  # 5. Loki (Logs Aggregation) <--- NEW
+  loki:
+    container_name: dsa-loki
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"

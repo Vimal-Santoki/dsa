@@ -1,3 +1,6 @@
+# Default value if not provided during build
+ARG APP_VERSION=1.0.0
+
 # Build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
@@ -16,7 +19,8 @@ RUN dotnet build "DSA.Api.csproj" -c Release -o /app/build
 
 # Publish
 FROM build AS publish
-RUN dotnet publish "DSA.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG APP_VERSION
+RUN dotnet publish "DSA.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:Version=$APP_VERSION
 
 # Final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final

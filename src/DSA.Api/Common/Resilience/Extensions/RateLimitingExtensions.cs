@@ -43,6 +43,25 @@ namespace DSA.Api.Common.Resilience.Extensions
                     });
                 });
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.OnRejected = async (context, token) =>
+                {
+                    // FIX: Manually tag the OpenTelemetry Activity so metrics see the 429
+                    if (System.Diagnostics.Activity.Current is { } activity)
+                    {
+                        activity.SetTag("http.response.status_code", 429);
+                        activity.SetStatus(System.Diagnostics.ActivityStatusCode.Error, "Rate Limit Exceeded");
+                    }
+                    var logger = context.HttpContext.RequestServices.GetService<ILogger<RateLimiter>>();
+                    var ip = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    
+                    logger?.LogWarning("Rate limit exceeded for IP {Ip} on {Path}", ip, context.HttpContext.Request.Path);
+
+                    // Rejection logic duplicated from default if we override OnRejected? 
+                    // No, default behavior is overridden.
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", token);
+                };
             });
         }
 
