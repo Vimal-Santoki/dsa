@@ -40,7 +40,6 @@ namespace DSA.Api.Features.Sorting.Api
             {
                 return TypedResults.BadRequest("Data array cannot be null.");
             }
-            logger.LogInformation("Algorithm {Algorithm} has been requested with the array length of {Length}", algorithm,  data.Length);
             try
             {
                 var selectedAlgorithm = sortAlgorithms.FirstOrDefault(a =>
