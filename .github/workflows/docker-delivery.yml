@@ -42,7 +42,7 @@ jobs:
               run: |
                   docker build . \
                     --file Dockerfile \
-                    --build-arg APP_VERSION=${{ steps.semver.outputs.version }} \
+                    --build-arg APP_VERSION=${{ steps.semver.outputs.dotnet_version }} \
                     -t local-dsa-api:${{ github.sha }}
 
             # 3. Scan Container (SCA)
