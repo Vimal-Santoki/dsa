@@ -70,4 +70,5 @@ echo "Calculated Result: $NEW_TAG ($change_type)"
 
 # Output for next steps
 echo "version=$NEW_TAG" >> $GITHUB_OUTPUT
+echo "dotnet_version=$major.$minor.$patch" >> $GITHUB_OUTPUT
 echo "should_release=$should_release" >> $GITHUB_OUTPUT
