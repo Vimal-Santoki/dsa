@@ -54,8 +54,10 @@ namespace DSA.Api.Common.Resilience.Extensions
                     }
                     var logger = context.HttpContext.RequestServices.GetService<ILogger<RateLimiter>>();
                     var ip = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                    
-                    logger?.LogWarning("Rate limit exceeded for IP {Ip} on {Path}", ip, context.HttpContext.Request.Path);
+                    var path = context.HttpContext.Request.Path.ToString()
+                        .Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase)
+                        .Replace("\n", string.Empty, StringComparison.OrdinalIgnoreCase);
+                    logger?.LogWarning("Rate limit exceeded for IP {Ip} on {Path}", ip, path);
 
                     // Rejection logic duplicated from default if we override OnRejected? 
                     // No, default behavior is overridden.
