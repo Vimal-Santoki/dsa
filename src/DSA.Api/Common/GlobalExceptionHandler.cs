@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,12 @@ namespace DSA.Api.Common
         }
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
+            var activity = Activity.Current;
+            if (activity != null)
+            {
+                activity.AddException(exception); // Using AddException as recommended
+                activity.SetStatus(ActivityStatusCode.Error, exception.Message);
+            }
             LogUnhandledException(_logger, exception.Message, exception);
 
             var problemDetails = new ProblemDetails

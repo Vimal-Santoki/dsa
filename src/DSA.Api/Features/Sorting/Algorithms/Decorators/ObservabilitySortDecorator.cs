@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using DSA.Api.Common.Observability.Diagnostics;
 using DSA.Api.Common.Observability.Metrics;
+using DSA.Api.Common.Resilience.Extensions;
 using DSA.Api.Features.Sorting.Interfaces;
 using OpenTelemetry.Trace;
+using Polly.Registry;
 
 namespace DSA.Api.Features.Sorting.Algorithms.Decorators
 {
@@ -40,12 +42,11 @@ namespace DSA.Api.Features.Sorting.Algorithms.Decorators
 
             try
             {
-                int result;
-
                 AppMetrics.InputSize.Record(size, tags);
 
+
                 // Execute the actual Logic
-                result = _inner.Sort(array);
+                var result = _inner.Sort(array);
 
                 activity?.SetTag("data.iterations", result);
 

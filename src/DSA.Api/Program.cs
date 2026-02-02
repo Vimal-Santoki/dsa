@@ -37,6 +37,7 @@ builder.AddAuthN();
 builder.AddAuthZ();
 builder.AddIam();
 builder.AddHealthChecks();
+builder.AddResiliencePipelines();
 builder.AddObservability();
 builder.AddSorting();
 
