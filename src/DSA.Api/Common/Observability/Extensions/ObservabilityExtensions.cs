@@ -35,7 +35,7 @@ namespace DSA.Api.Common.Observability.Extensions
                 {
                     tracing
                         .SetResourceBuilder(resourceBuilder)
-                        .SetSampler(new TraceIdRatioBasedSampler(0.1))
+                        .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(0.1)))
                         .AddSource(AppDiagnostics.ActivitySourceName) // Manual tracing source
                         .AddAspNetCoreInstrumentation() // Auto-trace Controllers
                         .AddHttpClientInstrumentation() // Auto-trace outgoing HTTP

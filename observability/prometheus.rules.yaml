@@ -1,22 +1,79 @@
 groups:
-    - name: dsa-alerts
+    # ==============================================================================
+    # 1. RECORDING RULES (The "Math")
+    #    Normalize raw metrics into "SLIs" so alerting is fast and cheap.
+    # ==============================================================================
+    - name: dsa-slos-recording
       rules:
-          # 1. High Server Error Rate (> 1% 5xx)
-          - alert: APIHighServerErrorRate
+          # Total requests
+          - record: job:http_requests:total
+            expr: sum(rate(http_server_request_duration_seconds_count[1m])) by (job)
+
+          # Error requests (5xx only)
+          - record: job:http_requests:error_5xx
+            expr: sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m])) by (job)
+
+    # ==============================================================================
+    # 2. SLO ALERTS (The "Brain")
+    #    Replaces "APIHighServerErrorRate".
+    #    Fires ONLY if we are burning our 99.9% budget too fast.
+    # ==============================================================================
+    - name: dsa-slo-alerts
+      rules:
+          # CRITICAL: We are burning budget at 14.4x normal speed.
+          # (Approx eq to > 1.5% error rate sustained for 5m).
+          # Detection: ~5 mins for breakdowns.
+          - alert: APIAvailabilityBudgetBurnHigh
             expr: |
                 (
-                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m]))
-                  /
-                  sum(rate(http_server_request_duration_seconds_count[1m]))
-                ) * 100 > 1
-            for: 1m
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1h])) 
+                  / 
+                  sum(rate(http_server_request_duration_seconds_count[1h])) 
+                  > (14.4 * 0.001)
+                )
+                and
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[5m])) 
+                  / 
+                  sum(rate(http_server_request_duration_seconds_count[5m])) 
+                  > (14.4 * 0.001)
+                )
             labels:
                 severity: critical
             annotations:
-                summary: "High 5xx Error Rate"
-                description: "5xx rate is {{ $value | humanize }}%."
+                summary: "SLO Breach: High Error Rate"
+                description: "Errors are burning the monthly budget at 14x speed. Immediate action required."
 
-          # 2. High Client Error Rate (> 5% 4xx) -- SIMPLIFIED
+          # WARNING: We are burning budget at 6x normal speed.
+          # Detection: ~30 mins for slow leaks.
+          - alert: APIAvailabilityBudgetBurnMedium
+            expr: |
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[6h])) 
+                  / 
+                  sum(rate(http_server_request_duration_seconds_count[6h])) 
+                  > (6.0 * 0.001)
+                )
+                and
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[30m])) 
+                  / 
+                  sum(rate(http_server_request_duration_seconds_count[30m])) 
+                  > (6.0 * 0.001)
+                )
+            labels:
+                severity: warning
+            annotations:
+                summary: "SLO Warning: Elevated Errors"
+                description: "Persistently slightly high error rate detected over last 6 hours."
+
+    # ==============================================================================
+    # 3. NON-SLO SAFETY NETS (The "Backup")
+    # ==============================================================================
+    - name: dsa-alerts-conventional
+      rules:
+          # KEEP: Client Errors (4xx) are NOT in the Availability SLO.
+          # We still need to know if we released a bad frontend or are under attack.
           - alert: APIHighClientErrorRate
             expr: |
                 (
@@ -24,37 +81,28 @@ groups:
                   /
                   sum(rate(http_server_request_duration_seconds_count[1m]))
                 ) * 100 > 5
-            for: 0s # FIRE IMMEDIATELY
+            for: 5m
             labels:
                 severity: warning
             annotations:
-                summary: "High 4xx Error Rate (Rate Limits?)"
+                summary: "High 4xx Error Rate"
                 description: "4xx rate is {{ $value | humanize }}%."
 
-          # 3. High Latency (P95 > 2s)
-          - alert: APIHighLatency
-            expr: |
-                histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) > 2
-            for: 1m
-            labels:
-                severity: warning
-            annotations:
-                summary: "High Latency"
-                description: "P95 Latency is {{ $value | humanize }}s."
-
-          # 4. Instance Down
+          # KEEP: Hard Down check.
+          # If Prometheus can't scrape the target, the metrics above might be empty/stale.
           - alert: InstanceDown
             expr: up == 0
             for: 1m
             labels:
                 severity: critical
 
-          # 5. DEBUG ALERT - ALWAYS FIRE
-          - alert: DebugAlertSystemActive
-            expr: vector(1) > 0
-            for: 0s
+          # KEEP: Simple Latency Threshold
+          # (Unless you want to implement Latency SLOs next)
+          - alert: APIHighLatency
+            expr: histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) > 2
+            for: 1m
             labels:
-                severity: info
+                severity: warning
             annotations:
-                summary: "Alert System Active"
-                description: "If you see this, Prometheus is successfully evaluating rules."
+                summary: "High Latency"
+                description: "P95 Latency is {{ $value | humanize }}s."

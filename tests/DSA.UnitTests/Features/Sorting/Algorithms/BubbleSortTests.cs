@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using DSA.Api.Features.Sorting.Algorithms;
 using DSA.UnitTests.Features.Sorting.Data;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -15,7 +16,7 @@ namespace DSA.UnitTests.Features.Sorting.Algorithms
         
         // [Fact] indicates this is a single test case
         [Fact]
-        public void Sort_Should_Sort_Unsorted_Array()
+        public async Task Sort_Should_Sort_Unsorted_Array()
         {
             // Arrange
             var sorter = new BubbleSort(logger);

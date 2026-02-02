@@ -1,0 +1,118 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "schemaVersion": 38,
+  "style": "dark",
+  "title": "DSA: Algorithm Performance (Big-O Analysis)",
+  "uid": "dsa-algorithm-dashboard",
+  "version": 6,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Business Intelligence (What are users doing?)",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 }
+    },
+    {
+      "type": "piechart",
+      "title": "Algorithm Popularity (Share of Execution)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 1, "w": 8, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(dsa_algorithm_executions_ops_total) by (algorithm_code)",
+          "legendFormat": "{{algorithm_code}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single" }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Items Sorted (Business Throughput)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 8, "y": 1, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(dsa_algorithm_input_size_items_sum)",
+          "legendFormat": "Items",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Avg Input Size per Request",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 12, "y": 1, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(rate(dsa_algorithm_input_size_items_sum[5m])) / sum(rate(dsa_algorithm_input_size_items_count[5m]))",
+          "legendFormat": "Avg Size",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Algorithm Efficiency (Time Complexity Analysis)",
+      "gridPos": { "x": 0, "y": 9, "w": 24, "h": 1 }
+    },
+    {
+      "type": "barchart",
+      "title": "Speed Comparison: Avg Latency per Item (Performance Efficiency)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 10, "w": 12, "h": 8 },
+      "description": "Lower is Better. Calculated as Duration / InputSize. Shows inherent algorithm efficiency independent of load.",
+      "targets": [
+        {
+          "expr": "sum(rate(dsa_algorithm_duration_ms_milliseconds_sum[5m])) by (algorithm_code) / sum(rate(dsa_algorithm_input_size_items_sum[5m])) by (algorithm_code)",
+          "legendFormat": "{{algorithm_code}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "P95 Latency Trend (ms)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 12, "y": 10, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(dsa_algorithm_duration_ms_milliseconds_bucket[1m])) by (le, algorithm_code))",
+          "legendFormat": "{{algorithm_code}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Stability Signals",
+      "gridPos": { "x": 0, "y": 18, "w": 24, "h": 1 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Algorithm Failure Rate",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 19, "w": 24, "h": 6 },
+      "targets": [
+        {
+          "expr": "sum(rate(dsa_algorithm_executions_ops_total{status=\"error\"}[1m])) by (algorithm_code)",
+          "legendFormat": "Errors - {{algorithm_code}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "templating": { "list": [] },
+  "tags": ["DSA", "Algorithm", "Big-O"]
+}

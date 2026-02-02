@@ -3,17 +3,112 @@
   "editable": true,
   "schemaVersion": 38,
   "style": "dark",
-  "title": "DSA: API Metrics (Throughput / P95 / Error%)",
+  "title": "DSA: API Reliability & SLOs",
   "uid": "dsa-api-dashboard",
-  "version": 4,
+  "version": 7,
   "refresh": "5s",
-  "time": { "from": "now-15m", "to": "now" },
+  "time": { "from": "now-1h", "to": "now" },
   "panels": [
+    {
+      "type": "row",
+      "title": "Strategy: 99.9% Availability SLO (Error Budget)",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "Remaining Error Budget (30d)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "1 - (sum(increase(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[30d])) / (sum(increase(http_server_request_duration_seconds_count[30d])) * 0.001))",
+          "legendFormat": "Budget Remaining",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 0 },
+              { "color": "green", "value": 0.2 }
+            ]
+          },
+          "max": 1,
+          "min": -1
+        }
+      },
+      "options": {
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "Current Burn Rate (1h)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 4, "y": 1, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[1h])) / sum(rate(http_server_request_duration_seconds_count[1h]))) / 0.001",
+          "legendFormat": "Burn Rate Multiplier",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 20,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 14.4 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Reliability Trend (Success Rate)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "x": 8, "y": 1, "w": 16, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count[5m]))",
+          "legendFormat": "Availability (5m avg)",
+          "refId": "A"
+        },
+        {
+          "expr": "vector(0.999)",
+          "legendFormat": "SLO Target (99.9%)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0.99,
+          "max": 1.00
+        }
+      }
+    },
+    {
+      "type": "row",
+      "title": "Operational Signals",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+      "collapsed": false
+    },
     {
       "type": "timeseries",
       "title": "Total API Throughput (ops/sec)",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
       "targets": [
         {
           "expr": "sum(rate(http_server_request_duration_seconds_count[1m])) by (service_name)",
@@ -29,10 +124,10 @@
       ]
     },
     {
-      "type": "heatmap", 
+      "type": "heatmap",
       "title": "Latency Heatmap (with Exemplars)",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
       "targets": [
         {
           "expr": "sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)",
@@ -50,37 +145,23 @@
           "scheme": "Spectral",
           "steps": 128
         },
-        "exemplars": {
-          "color": "rgba(255,0,255,0.7)" 
-        }
+        "exemplars": { "color": "rgba(255,0,255,0.7)" }
       }
     },
     {
       "type": "timeseries",
-      "title": "Error Rate % (Over Time)",
+      "title": "Client Errors (4xx)",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 6 },
       "targets": [
         {
-          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"4..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m])) * 100",
-          "legendFormat": "4xx % (Global)",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"4..\"}[1m]))",
+          "legendFormat": "4xx Rate",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m])) * 100",
-          "legendFormat": "5xx % (Global)",
-          "refId": "B"
         }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100
-        }
-      }
+      ]
     }
   ],
   "templating": { "list": [] },
-  "tags": ["DSA", "API", "metrics"]
+  "tags": ["DSA", "API", "SLO"]
 }

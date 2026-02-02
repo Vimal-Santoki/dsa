@@ -22,6 +22,7 @@
     <!-- Use ONLY the UI package from Swashbuckle (avoids the crash) -->
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+    <PackageReference Include="Microsoft.Extensions.Resilience" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

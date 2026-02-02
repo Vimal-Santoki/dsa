@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using DSA.Api.Common.Observability.Metrics;
 using DSA.Api.Features.Sorting.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DSA.Api.Features.Sorting.Algorithms
 {
@@ -47,7 +48,6 @@ namespace DSA.Api.Features.Sorting.Algorithms
                     if (!swapped) break;
                     
                 }
-
                 return iterations;
             }
             catch (Exception ex)
