@@ -20,9 +20,9 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.0" />
     <!-- Use ONLY the UI package from Swashbuckle (avoids the crash) -->
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
-    <PackageReference Include="Microsoft.Extensions.Resilience" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.2.0" />
   </ItemGroup>
 
 </Project>
