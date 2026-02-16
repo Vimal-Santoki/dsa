@@ -24,7 +24,7 @@ namespace DSA.Api.Common.Iam.Services
                         return false; // Explicit deny
                     }
 
-                    if (statement.Effect== Effect.Allow)
+                    if (statement.Effect == Effect.Allow)
                     {
                         isAllowed = true; // Mark as allowed, but continue checking for denies
                     }
@@ -40,7 +40,7 @@ namespace DSA.Api.Common.Iam.Services
 
             foreach (var value in configuredValue)
             {
-                if (value== "*" || value.Equals(requestedValue, StringComparison.OrdinalIgnoreCase))
+                if (value == "*" || value.Equals(requestedValue, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

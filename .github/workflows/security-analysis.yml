@@ -7,7 +7,7 @@ jobs:
   security-analysis:
     runs-on: ubuntu-latest
     permissions:
-      security-events: write # Required for CodeQL
+      security-events: write  # Required for CodeQL
       actions: read
       contents: read
 
@@ -24,7 +24,7 @@ jobs:
           ignore-unfixed: true
           format: "table"
           severity: "CRITICAL,HIGH"
-          exit-code: "1" # Block build if secrets found
+          exit-code: "1"  # Block build if secrets found
 
       # B. CODEQL (Deep Logic Scan)
       - name: Initialize CodeQL

@@ -1,0 +1,74 @@
+version: "3"
+
+tasks:
+    # LINTING TASKS (Static Analysis)
+    lint-csharp:
+        desc: "Lints C# code style (dotnet format)"
+        cmds:
+            # --verify-no-changes: Returns error if files would change
+            - dotnet format --verify-no-changes
+
+    lint-yaml:
+        desc: "Lints YAML configuration files"
+        cmds:
+            # We target specific files/folders
+            - yamllint -c .yamllint .github/workflows/
+            - yamllint -c .yamllint *.yml
+
+    lint-docker:
+        desc: "Lints container definitions"
+        cmds:
+            # Just lint, don't stop build unless critical
+            - echo "Checking Prod Dockerfile..."
+            - hadolint Dockerfile || true
+            - echo "Checking CI Dockerfile..."
+            - hadolint tests/Dockerfile.ci || true
+
+    lint:
+        desc: "Runs all linters"
+        cmds:
+            - task: lint-csharp
+            - task: lint-yaml
+            - task: lint-docker
+        ignore_error: false
+
+    # BUILD & TEST TASKS
+    restore:
+        desc: "Restores NuGet packages"
+        cmds:
+            - dotnet restore DSA.sln
+
+    build:
+        desc: "Builds the solution with strict mode. Assumes restore is done (by Docker layer)."
+        cmds:
+            - dotnet build DSA.sln --no-restore /p:TreatWarningsAsErrors=true
+
+    test-unit:
+        desc: "Runs strictly unit tests"
+        deps: [build]
+        cmds:
+            - echo "🧪 Running Unit Tests..."
+            - dotnet test tests/DSA.UnitTests/DSA.UnitTests.csproj --no-restore --logger:"trx;LogFileName=unit_tests.xml" --results-directory ./TestResults
+
+    test-integration:
+        desc: "Runs integration tests"
+        deps: [build]
+        cmds:
+            - echo "🔗 Running Integration Tests..."
+            - dotnet test tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj --no-restore --logger:"trx;LogFileName=integration_tests.xml" --results-directory ./TestResults
+
+    test:
+        desc: "The full Verify pipeline used by Docker"
+        cmds:
+            - task: lint
+            - task: test-unit
+            - task: test-integration
+        ignore_error: false
+
+    docker-ci:
+        desc: "Runs the full CI pipeline inside Docker"
+        cmds:
+            # -q suppresses build output (pulls/builds)
+            # --rm removes the container after run
+            - docker compose -f docker-compose.ci.yml build --quiet ci-runner
+            - docker compose -f docker-compose.ci.yml run --rm ci-runner

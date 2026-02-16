@@ -20,9 +20,9 @@ namespace DSA.Api.Common.Observability.Middleware
 
             // 1. Identify the user (using 'sub' claim is standard OIDC/OAuth practice)
             // If identity name is available, use it, otherwise fall back to 'sub' claim, or anonymous
-             var userId = user.Identity?.Name 
-                         ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                         ?? "anonymous";
+            var userId = user.Identity?.Name
+                        ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                        ?? "anonymous";
 
             // 2. Add to Activity (Trace)
             // User requested 'user.Id' instead of 'enduser.id'

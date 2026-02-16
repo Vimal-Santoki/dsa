@@ -8,10 +8,10 @@ services:
     volumes:
       - ./observability/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - "4317:4317" # OTLP gRPC receiver
-      - "4318:4318" # OTLP HTTP receiver
-      - "8888:8888" # Prom endpoint for collector metrics
-      - "8889:8889" # Prom exporter endpoint (Prometheus scrapes this)
+      - "4317:4317"  # OTLP gRPC receiver
+      - "4318:4318"  # OTLP HTTP receiver
+      - "8888:8888"  # Prom endpoint for collector metrics
+      - "8889:8889"  # Prom exporter endpoint (Prometheus scrapes this)
 
   # 2. Prometheus (Metrics Database)
   # Stores timeseries data (CPU, Memory, Request Counts, Latency histograms)
@@ -33,7 +33,7 @@ services:
   tempo:
     container_name: dsa-tempo
     image: grafana/tempo:2.3.1   # <--- PINNED VERSION
-    command: [ "-config.file=/etc/tempo.yaml" ]
+    command: ["-config.file=/etc/tempo.yaml"]
     volumes:
       - ./observability/tempo.yaml:/etc/tempo.yaml
       # - /tmp/tempo-data:/tmp/tempo  <--- COMMENT OUT ANY DATA VOLUME

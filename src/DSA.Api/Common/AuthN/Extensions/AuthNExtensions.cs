@@ -38,7 +38,8 @@ namespace DSA.Api.Common.AuthN.Extensions
                 });
 
             // Secure by default strategy - require authentication for all endpoints unless explicitly allowed
-            builder.Services.AddAuthorization(options => {
+            builder.Services.AddAuthorization(options =>
+            {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();

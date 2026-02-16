@@ -39,7 +39,7 @@ namespace DSA.UnitTests.Common.Iam.Services
             var policy = new PolicyDocument("1", new List<Statements>());
             _permissionService.GetPolicyAsync("user1", Arg.Any<CancellationToken>())
                 .Returns(policy);
-            
+
             _policyEvaluator.Evaluate(policy, "action", "resource").Returns(true);
 
             // Act

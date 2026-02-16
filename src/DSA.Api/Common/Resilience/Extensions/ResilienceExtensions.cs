@@ -1,5 +1,5 @@
-using Polly;
 using System.Threading.RateLimiting;
+using Polly;
 
 namespace DSA.Api.Common.Resilience.Extensions
 {
