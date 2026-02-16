@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DSA.Api.Common.Extensions;
 using DSA.Api.Common.Iam.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
@@ -29,7 +30,7 @@ namespace DSA.Api.Common.AuthZ.Services
 
             if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogDebug("Authorization Handled: User ID not found in claims.");
+                _logger.LogDebugSafe("Authorization Handled: User ID not found in claims.");
                 return;
             }
 
