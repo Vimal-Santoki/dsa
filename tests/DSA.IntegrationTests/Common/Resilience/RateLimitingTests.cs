@@ -39,18 +39,18 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         [Fact]
         public async Task Rate_Limiting_Should_Allow_Under_Limit()
         {
-            
+
             var client = _factory.CreateClient();
             await client.AuthenticateAsync();
             var endpoint = new Uri("/api/sort", UriKind.Relative);
-            
+
             // Unique IP
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.50");
-            
-            for(var i=0; i<50; i++) 
+
+            for (var i = 0; i < 50; i++)
             {
-                 using var res = await client.GetAsync(endpoint);
-                 res.EnsureSuccessStatusCode();
+                using var res = await client.GetAsync(endpoint);
+                res.EnsureSuccessStatusCode();
             }
         }
 
@@ -60,14 +60,14 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
             var client = _factory.CreateClient();
             await client.AuthenticateAsync();
             var endpoint = new Uri("/api/sort", UriKind.Relative);
-            
+
             // Unique IP
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.51");
 
             // Exhaust
-            for(var i=0; i<100; i++) 
+            for (var i = 0; i < 100; i++)
             {
-                 using var res = await client.GetAsync(endpoint);
+                using var res = await client.GetAsync(endpoint);
             }
 
             // Verify Block
@@ -84,9 +84,9 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.52");
 
             // Exhaust
-            for(var i=0; i<100; i++) 
+            for (var i = 0; i < 100; i++)
             {
-                 await client.GetAsync(endpoint);
+                await client.GetAsync(endpoint);
             }
 
             // Wait (Window is 2s)
@@ -97,15 +97,15 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
             Assert.Equal(HttpStatusCode.OK, fresh.StatusCode);
         }
 
-         [Fact]
+        [Fact]
         public async Task Health_Endpoints_Should_Bypass_Rate_Limit()
         {
             var client = _factory.CreateClient();
             await client.AuthenticateAsync();
             var endpoint = new Uri("/health/ready", UriKind.Relative);
             client.DefaultRequestHeaders.Add("X-Test-IP", "192.168.1.53");
-            
-            for (var i = 0; i < 120; i++) 
+
+            for (var i = 0; i < 120; i++)
             {
                 using var response = await client.GetAsync(endpoint);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -179,7 +179,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1515:Do not catch general exception types", Justification = "Test code")]
-    public  class FakeIpMiddleware
+    public class FakeIpMiddleware
     {
         private readonly RequestDelegate _next;
         public FakeIpMiddleware(RequestDelegate next) => _next = next;
@@ -188,7 +188,7 @@ namespace DSA.IntegrationTests.SharedTests.Resilience
         {
             ArgumentNullException.ThrowIfNull(context);
 
-            if (context.Request.Headers.TryGetValue("X-Test-IP", out var ipVal) && 
+            if (context.Request.Headers.TryGetValue("X-Test-IP", out var ipVal) &&
                 IPAddress.TryParse(ipVal.ToString(), out var ip))
             {
                 context.Connection.RemoteIpAddress = ip;

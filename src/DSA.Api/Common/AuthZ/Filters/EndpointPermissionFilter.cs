@@ -51,7 +51,7 @@ namespace DSA.Api.Common.AuthZ.Filters
             }
 
             var iamService = context.HttpContext.RequestServices.GetRequiredService<IIamService>();
-            
+
             var isAuthorized = await iamService.IsAuthorizedAsync(userId, _action, resourceId!);
             if (!isAuthorized)
             {

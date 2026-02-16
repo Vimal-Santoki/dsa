@@ -45,7 +45,7 @@ namespace DSA.Api.Features.Sorting.Algorithms.Decorators
                 AppMetrics.InputSize.Record(size, tags);
 
                 // Execute the actual Logic
-                 _inner.Sort(array);
+                _inner.Sort(array);
 
                 var successTags = tags;
                 successTags.Add("status", status);

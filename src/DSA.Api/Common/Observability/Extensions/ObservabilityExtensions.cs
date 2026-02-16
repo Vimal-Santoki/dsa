@@ -51,7 +51,7 @@ namespace DSA.Api.Common.Observability.Extensions
                         .AddAspNetCoreInstrumentation()    // Request Counts, Latency
                         .AddHttpClientInstrumentation()    // Outgoing HTTP Latency
                         .AddOtlpExporter();              // Ship to Docker (Collector)
-                        
+
                 });
 
             // 4. Configure Logging (The "L" in LGTM)

@@ -1,17 +1,17 @@
 using System.Runtime.CompilerServices;
+using DSA.Api.Common;
+using DSA.Api.Common.AuthN.Api;
+using DSA.Api.Common.AuthN.Extensions;
+using DSA.Api.Common.AuthZ.Extensions;
+using DSA.Api.Common.Health.Api;
+using DSA.Api.Common.Health.Extensions;
+using DSA.Api.Common.Iam.Extensions;
+using DSA.Api.Common.Observability.Extensions;
+using DSA.Api.Common.Observability.Middleware;
+using DSA.Api.Common.Resilience.Extensions;
 using DSA.Api.Features.Sorting.Api;
 using DSA.Api.Features.Sorting.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
-using DSA.Api.Common.Health.Extensions;
-using DSA.Api.Common.Health.Api;
-using DSA.Api.Common;
-using DSA.Api.Common.Resilience.Extensions;
-using DSA.Api.Common.AuthN.Extensions;
-using DSA.Api.Common.AuthN.Api;
-using DSA.Api.Common.Iam.Extensions;
-using DSA.Api.Common.AuthZ.Extensions;
-using DSA.Api.Common.Observability.Extensions;
-using DSA.Api.Common.Observability.Middleware;
 
 [assembly: InternalsVisibleTo("DSA.UnitTests")]
 [assembly: InternalsVisibleTo("DSA.IntegrationTests")]

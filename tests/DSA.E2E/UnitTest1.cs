@@ -1,4 +1,4 @@
-﻿namespace DSA.E2E;
+namespace DSA.E2E;
 
 public class UnitTest1
 {

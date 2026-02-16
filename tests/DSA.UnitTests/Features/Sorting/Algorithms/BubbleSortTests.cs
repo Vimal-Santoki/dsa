@@ -9,7 +9,8 @@ namespace DSA.UnitTests.Features.Sorting.Algorithms
     {
         [Theory]
         [ClassData(typeof(BubbleSortTestData))]
-        public void Sort_Should_Handle_Various_Inputs(int[] input, int[] expected) {
+        public void Sort_Should_Handle_Various_Inputs(int[] input, int[] expected)
+        {
             var sorter = new BubbleSort();
             sorter.Sort(input);
             Assert.Equal(expected, input);

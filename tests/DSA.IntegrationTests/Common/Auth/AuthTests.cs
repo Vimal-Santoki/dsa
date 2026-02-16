@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace DSA.IntegrationTests.Common.Auth
 {
-    public class AuthTests: IClassFixture<WebApplicationFactory<Program>>
+    public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
     {
         readonly HttpClient _client;
         public AuthTests(WebApplicationFactory<Program> factory)
@@ -22,7 +22,7 @@ namespace DSA.IntegrationTests.Common.Auth
         public async Task GetToken_Should_Return_Unauthorized()
         {
             // Arrange
-            var loginRequest = new LoginRequest("testuser","wrongpassword");
+            var loginRequest = new LoginRequest("testuser", "wrongpassword");
             var requestUri = "/connect/token"; // Replace with actual protected endpoint
             // Act
             var response = await _client.PostAsJsonAsync(requestUri, loginRequest);
@@ -34,7 +34,7 @@ namespace DSA.IntegrationTests.Common.Auth
         public async Task GetToken_Should_Return_Valid_Jwt_Token_If_Authenticated()
         {
             // Arrange
-            var loginRequest = new LoginRequest("admin","password");
+            var loginRequest = new LoginRequest("admin", "password");
             var requestUri = "/connect/token"; // Replace with actual protected endpoint
             // Act
             var response = await _client.PostAsJsonAsync(requestUri, loginRequest);

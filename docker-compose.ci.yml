@@ -1,0 +1,11 @@
+services:
+  # The CI Runner Service
+  ci-runner:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile.ci
+    volumes:
+      # Map TestResults so you can view XML reports on your host machine
+      - ./TestResults:/app/TestResults
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Testing

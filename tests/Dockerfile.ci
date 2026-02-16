@@ -1,0 +1,55 @@
+# This Dockerfile is for CI/CD and Testing only.
+# It includes the full SDK and the 'task' runner.
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS ci-env
+
+# 1. Install Task (The Logic Runner) and Linters
+# We combine apt-get updates to keep layers small.
+# Added ca-certificates to ensure curl can verify https connections
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    yamllint \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Hadolint (Dockerfile Linter)
+RUN curl -L https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint \
+    && chmod +x /usr/local/bin/hadolint
+
+# Install Task (Direct Binary Download - More Robust)
+RUN curl -L https://github.com/go-task/task/releases/download/v3.41.0/task_linux_amd64.tar.gz -o task.tar.gz \
+    && tar -xzf task.tar.gz \
+    && mv task /usr/local/bin/task \
+    && rm task.tar.gz
+
+WORKDIR /app
+
+# 2. Copy Build Definitions (Optimize Caching)
+COPY DSA.sln ./
+COPY Directory.Build.props ./
+COPY tests/Directory.Build.props ./tests/
+COPY Taskfile.yml ./
+COPY .yamllint ./
+
+# 3. Copy ALL Project Files (Required for Restore)
+# We copy these individually to facilitate Docker Layer Caching.
+# If these files don't change, this layer is cached.
+COPY src/DSA.Api/DSA.Api.csproj ./src/DSA.Api/
+COPY tests/DSA.UnitTests/DSA.UnitTests.csproj ./tests/DSA.UnitTests/
+COPY tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj ./tests/DSA.IntegrationTests/
+COPY tests/DSA.E2E/DSA.E2E.csproj ./tests/DSA.E2E/
+
+# 4. Run Restore (This layer is cached unless .csproj changes)
+# We use the Taskfile to define how restore happens, but run it here to bake it into the image.
+RUN task restore
+
+# 5. Copy Source Code & Configs (Explicitly for Linting)
+COPY .github/ ./.github/
+COPY src/ ./src/
+COPY tests/ ./tests/
+COPY docker-compose*.yml ./
+COPY Dockerfile ./
+
+# 6. Entrypoint
+# When the container starts, it executes the 'test' task defined in Taskfile.yml
+ENTRYPOINT ["task", "test"]

@@ -11,7 +11,7 @@ namespace DSA.Api.Common.AuthZ.Extensions
         public static void AddAuthZ(this IHostApplicationBuilder builder)
         {
             builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            
+
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("Sorting:List", policy => policy.AddRequirements(new PermissionRequirement("Sorting:List")));

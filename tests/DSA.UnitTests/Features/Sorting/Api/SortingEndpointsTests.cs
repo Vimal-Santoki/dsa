@@ -26,7 +26,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
             _mockAlgo.Code.Returns("MockSort");
             _mockAlgo.Sort(Arg.Any<int[]>());
 
-            _serviceList = new List<ISortAlgorithm> { _mockAlgo,};
+            _serviceList = new List<ISortAlgorithm> { _mockAlgo, };
 
             _mockResilienceProvider = Substitute.For<ResiliencePipelineProvider<string>>();
             _mockResilienceProvider.GetPipeline(Arg.Any<string>()).Returns(ResiliencePipeline.Empty);
@@ -129,16 +129,16 @@ namespace DSA.UnitTests.Features.Sorting.Api
             var algorithms = okResult.Value;
             Assert.NotNull(algorithms);
             Assert.Equal(2, algorithms.Count());
-            
-            Assert.Contains( algorithms, a=> a.Code == "MockSort" && a.DisplayName == "Mock Sort");
-            Assert.Contains(algorithms ,a=> a.Code == "AnotherMockSort" && a.DisplayName == "Another Mock Sort");
+
+            Assert.Contains(algorithms, a => a.Code == "MockSort" && a.DisplayName == "Mock Sort");
+            Assert.Contains(algorithms, a => a.Code == "AnotherMockSort" && a.DisplayName == "Another Mock Sort");
         }
 
         [Fact]
         public async Task RunSortAlgorithm_Should_Handle_Null_Input_Array()
         {
             int[]? nullInput = null;
-            var result =await SortingEndpoints.RunSortAlgorithm("MockSort", nullInput!, _serviceList, _mockResilienceProvider, NullLoggerFactory.Instance);
+            var result = await SortingEndpoints.RunSortAlgorithm("MockSort", nullInput!, _serviceList, _mockResilienceProvider, NullLoggerFactory.Instance);
             var badRequestResult = Assert.IsType<BadRequest<string>>(result.Result);
             Assert.NotNull(badRequestResult.Value);
             _mockAlgo.DidNotReceive().Sort(Arg.Any<int[]>());

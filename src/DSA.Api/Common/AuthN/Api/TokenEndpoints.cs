@@ -23,12 +23,12 @@ namespace DSA.Api.Common.AuthN.Api
         }
 
         static async Task<IResult> GetToken(
-            [FromBody] Dto.LoginRequest request, 
+            [FromBody] Dto.LoginRequest request,
             [FromServices] IIdentityService identityService,
             [FromServices] ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger("DSA.Api.Common.AuthN.Api.TokenEndpoints");
-            
+
             var result = await identityService.LoginAsync(request);
 
             if (result is null)

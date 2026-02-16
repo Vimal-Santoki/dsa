@@ -19,7 +19,8 @@ namespace DSA.IntegrationTests.SharedTests.Health
         [Theory]
         [InlineData("/health/live")]
         [InlineData("/health/ready")]
-        public async Task Health_Endpoint_Should_Return_Healthy(string endpoint) {
+        public async Task Health_Endpoint_Should_Return_Healthy(string endpoint)
+        {
             // Act
             var response = await _client.GetAsync(new Uri(endpoint, UriKind.Relative));
 
@@ -29,6 +30,6 @@ namespace DSA.IntegrationTests.SharedTests.Health
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains("Healthy", content, StringComparison.OrdinalIgnoreCase);
-}
+        }
     }
 }

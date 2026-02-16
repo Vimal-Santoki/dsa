@@ -19,7 +19,7 @@ namespace DSA.UnitTests.Features.Sorting.Data
 
             yield return new object[] { new int[] { -1, -3, -2, 0 }, new int[] { -3, -2, -1, 0 } }; // mix of positive and negative numbers
             yield return new object[] { new int[] { 10 }, new int[] { 10 } }; // single element
-            yield return new object[] { new int[] { 1,2 }, new int[] { 1,2 } }; // two elements to test median of three pivot selection
+            yield return new object[] { new int[] { 1, 2 }, new int[] { 1, 2 } }; // two elements to test median of three pivot selection
             yield return new object[] { Array.Empty<int>(), Array.Empty<int>() }; // empty array
             yield return new object[] { new int[] { 2, 2, 2 }, new int[] { 2, 2, 2 } }; // repetitive elements
             yield return new object[] { new int[] { 2, 3, 4 }, new int[] { 2, 3, 4 } }; // already sorted
@@ -35,6 +35,6 @@ namespace DSA.UnitTests.Features.Sorting.Data
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-      
+
     }
 }

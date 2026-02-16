@@ -1,0 +1,15 @@
+extends: default
+
+rules:
+  # 80 chars is too strict for GitHub Actions (shell commands, long paths)
+  line-length: disable
+
+  # GitHub Actions workflow files don't require the document start marker
+  document-start: disable
+
+  # Allow "on" key for GitHub Actions
+  truthy: disable
+
+  # Relax new-line constraints to avoid issues between Windows/Linux checkout
+  new-line-at-end-of-file: disable
+  new-lines: disable

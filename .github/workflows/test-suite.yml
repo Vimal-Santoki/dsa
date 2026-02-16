@@ -1,23 +1,25 @@
 name: Test Suite Module
 
 on:
-  workflow_call:
+    workflow_call:
 
 jobs:
-  test-suite:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "10.0.x"
+    verify:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Restore
-        run: dotnet restore DSA.sln
+            # PHASE 1: VERIFICATION (The Hybrid Approach)
+            # This runs Unit & Integration tests inside the consistent container.
+            # The entrypoint is 'task ci' (test-unit + test-integration).
+            - name: 🧪 Run CI Pipeline (Dockerized)
+              run: docker compose -f docker-compose.ci.yml up --build --exit-code-from ci-runner
 
-      - name: Unit Tests
-        run: dotnet test tests/DSA.UnitTests/DSA.UnitTests.csproj --no-restore --verbosity normal
-
-      - name: Integration Tests
-        run: dotnet test tests/DSA.IntegrationTests/DSA.IntegrationTests.csproj --no-restore --verbosity normal
+            # Optional: Publish Test Results
+            # The container maps ./TestResults to the host (via docker-compose volume), so we can upload them.
+            - name: 📊 Upload Test Results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: test-results
+                  path: TestResults/*.xml

@@ -1,6 +1,6 @@
+using DSA.Api.Common.Iam.Constants;
 using DSA.Api.Common.Iam.Interfaces;
 using DSA.Api.Common.Iam.Models;
-using DSA.Api.Common.Iam.Constants;
 
 namespace DSA.Api.Common.Iam.Services
 {
@@ -23,13 +23,13 @@ namespace DSA.Api.Common.Iam.Services
             return new PolicyDocument("2026", new()
             {
                 // Read-Only Policy: Allow only read actions on specific resources
-                new Statements(Effect.Allow, 
-                    [AppPermissions.Sorting.List], 
+                new Statements(Effect.Allow,
+                    [AppPermissions.Sorting.List],
                     ["*"]
                 ),
                 // Deny write actions
-                new Statements(Effect.Deny, 
-                    [AppPermissions.Sorting.Execute], 
+                new Statements(Effect.Deny,
+                    [AppPermissions.Sorting.Execute],
                     ["*"]
                 )
             });

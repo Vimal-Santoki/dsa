@@ -64,7 +64,7 @@ namespace DSA.Api.Common.AuthN.Services
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            var tokenResponse= new TokenResponse(tokenString, settings.ExpiryMinutes * 60);
+            var tokenResponse = new TokenResponse(tokenString, settings.ExpiryMinutes * 60);
 
             return Task.FromResult<TokenResponse?>(tokenResponse);
         }
