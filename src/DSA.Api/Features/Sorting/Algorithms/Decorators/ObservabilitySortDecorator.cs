@@ -21,7 +21,7 @@ namespace DSA.Api.Features.Sorting.Algorithms.Decorators
 
         public string Category => _inner.Category;
 
-        public int Sort(int[] array)
+        public void Sort(int[] array)
         {
             var size = array.Length;
 
@@ -44,18 +44,12 @@ namespace DSA.Api.Features.Sorting.Algorithms.Decorators
             {
                 AppMetrics.InputSize.Record(size, tags);
 
-
                 // Execute the actual Logic
-                var result = _inner.Sort(array);
-
-                activity?.SetTag("data.iterations", result);
-
+                 _inner.Sort(array);
 
                 var successTags = tags;
                 successTags.Add("status", status);
                 AppMetrics.Executions.Add(1, successTags);
-
-                return result;
             }
             catch (Exception ex)
             {

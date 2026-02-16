@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DSA.Api.Common.AuthN.Dto;
 using DSA.Api.Common.AuthN.Interfaces;
+using DSA.Api.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +33,7 @@ namespace DSA.Api.Common.AuthN.Api
 
             if (result is null)
             {
-                logger.LogDebug("Token request denied for user: {Username}", request.Username);
+                logger.LogDebugSafe("Token request denied for user: {Username}", request.Username);
                 return Results.Unauthorized();
             }
 

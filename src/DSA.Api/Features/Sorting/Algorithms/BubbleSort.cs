@@ -13,47 +13,31 @@ namespace DSA.Api.Features.Sorting.Algorithms
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via DI")]
     internal sealed class BubbleSort : ISortAlgorithm
     {
-        readonly ILogger<BubbleSort> _logger;
-        public BubbleSort(ILogger<BubbleSort> logger)
-        {
-            _logger = logger;
-        }
         public string Name => "Bubble Sort";
         public string Code => "BubbleSort";
 
-        public int Sort(int[] array)
+        public void Sort(int[] array)
         {
-            try
-            {
-                var swapped = false;
-                var iterations = 0;
+            var swapped = false;
 
-                // Outer loop: Each pass bubbles the largest element to the end.
-                for (var i = 0; i < array.Length - 1; i++)
+            // Outer loop: Each pass bubbles the largest element to the end.
+            for (var i = 0; i < array.Length - 1; i++)
+            {
+                swapped = false;
+                // Optimization: We subtract 'i' because the last 'i' elements are already sorted.
+                for (var j = 0; j < array.Length - i - 1; j++)
                 {
-                    swapped = false;
-                    // Optimization: We subtract 'i' because the last 'i' elements are already sorted.
-                    for (var j = 0; j < array.Length - i - 1; j++)
+                    if (array[j] > array[j + 1])
                     {
-                        iterations++;
-                        if (array[j] > array[j + 1])
-                        {
-                            swapped = true;
-                            
-                            (array[j], array[j + 1]) = (array[j + 1], array[j]);
-                        }
-                    }
+                        swapped = true;
 
-                    // Optimization: If no elements were swapped, the array is already sorted.
-                    if (!swapped) break;
-                    
+                        (array[j], array[j + 1]) = (array[j + 1], array[j]);
+                    }
                 }
-                return iterations;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to execute {Algorithm} on input size {Size}", Name, array.Length);
-                throw;
+
+                // Optimization: If no elements were swapped, the array is already sorted.
+                if (!swapped) break;
+
             }
 
         }

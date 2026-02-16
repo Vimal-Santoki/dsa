@@ -49,7 +49,6 @@ namespace DSA.E2E.Features.Sorting
             Assert.NotNull(result);
             Assert.Equal(_expectedSortedArray, result.SortedData);
             Assert.Equal("Bubble Sort", result.Algorithm);
-            Assert.True(result.Iterations > 0);
         }
 
         [Fact]

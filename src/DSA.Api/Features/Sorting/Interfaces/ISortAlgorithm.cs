@@ -23,6 +23,6 @@ namespace DSA.Api.Features.Sorting.Interfaces
         /// </summary>
         /// <param name="array">The integer array to sort.</param>
         /// <returns>The number of iterations or swaps performed (complexity metric).</returns>
-        int Sort(int[] array);
+        void Sort(int[] array);
     }
 }

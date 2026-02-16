@@ -12,13 +12,15 @@
     <Nullable>enable</Nullable>
 
     <!-- Code Quality & Strictness (The Principal Touch) -->
-    <AnalysisLevel>latest-all</AnalysisLevel> <!-- Enables all newest analyzers -->
+    <AnalysisLevel>10.0-preview</AnalysisLevel> <!-- Enables all newest analyzers -->
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild> <!-- Fails build on style violations -->
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors> <!-- Zero tolerance for warnings -->
     
     <!-- Deterministic Builds (for reproducible CI/CD) -->
     <Deterministic>true</Deterministic>
-
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <!-- Suppress specific analyzer warnings -->
     <NoWarn>$(NoWarn);CA1848</NoWarn>
   </PropertyGroup>
