@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using DSA.Api.Features.Sorting.Dto;
 using DSA.IntegrationTests.Common.Extensions;
+using DSA.IntegrationTests.Features.Sorting.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace DSA.IntegrationTests.Features.Sorting.Api
@@ -10,7 +11,6 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
     {
         private readonly HttpClient _client;
         private static readonly int[] _testData = [5, 3, 8, 1, 2];
-        private static readonly int[] _expectedData = [1, 2, 3, 5, 8];
 
         public SortingEndpointsTests(WebApplicationFactory<Program> factory)
         {
@@ -29,20 +29,22 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
             Assert.Contains(algorithms, a => a.Code == "BubbleSort" && a.DisplayName == "Bubble Sort");
         }
 
-        [Fact]
-        public async Task RunSortAlgorithm_ShouldReturnSortedData()
+        [Theory]
+        [ClassData(typeof(SortingTestData))]
+        public async Task RunSortAlgorithm_ShouldReturnSortedData(SortingIntegrationScenario scenario)
         {
+            ArgumentNullException.ThrowIfNull(scenario);
+
             // Arrange
-            var algorithm = "bubblesort";
+            var algorithm = scenario.AlgoCode;
             // Act
-            var response = await _client.PostAsJsonAsync($"/api/sort/{algorithm}", _testData);
+            var response = await _client.PostAsJsonAsync($"/api/sort/{algorithm}", scenario.Input);
             // Assert
             response.EnsureSuccessStatusCode();
             var sortResult = await response.Content.ReadFromJsonAsync<SortResult>();
             Assert.NotNull(sortResult);
-            Assert.Equal(_expectedData, sortResult.SortedData);
-            Assert.Equal("bubble sort", sortResult.Algorithm, ignoreCase: true);
-            Assert.True(sortResult.Iterations > 0);
+            Assert.Equal(scenario.ExpectedOutput, sortResult.SortedData);
+            Assert.Equal(scenario.ExpectedAlgoName, sortResult.Algorithm, ignoreCase: true);
         }
 
         [Fact]

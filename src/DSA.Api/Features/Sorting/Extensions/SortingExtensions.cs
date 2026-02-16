@@ -10,6 +10,7 @@ namespace DSA.Api.Features.Sorting.Extensions
         public static void AddSorting(this IHostApplicationBuilder builder)
         {
             builder.Services.AddDecorate<ISortAlgorithm, BubbleSort, ObservabilitySortDecorator>();
+            builder.Services.AddDecorate<ISortAlgorithm, QuickSort, ObservabilitySortDecorator>();
         }
     }
 }

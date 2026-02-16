@@ -17,13 +17,15 @@ namespace DSA.IntegrationTests.Features.Sorting.Api
 
             builder.ConfigureServices(services =>
             {
-                // find the existing registration and remove it
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(ISortAlgorithm));
+                // find the existing registrations
+                var descriptors = services.Where(
+                    d => d.ServiceType == typeof(ISortAlgorithm))
+                    .ToList();
 
-                if (descriptor != null)
+                // remove all of them
+                foreach (var d in descriptors)
                 {
-                    services.Remove(descriptor);
+                    services.Remove(d);
                 }
 
                 // create and register the mock

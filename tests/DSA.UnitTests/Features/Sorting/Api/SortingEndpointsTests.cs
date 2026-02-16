@@ -24,7 +24,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
             _mockAlgo = Substitute.For<ISortAlgorithm>();
             _mockAlgo.Name.Returns("Mock Sort");
             _mockAlgo.Code.Returns("MockSort");
-            _mockAlgo.Sort(Arg.Any<int[]>()).Returns(100);
+            _mockAlgo.Sort(Arg.Any<int[]>());
 
             _serviceList = new List<ISortAlgorithm> { _mockAlgo,};
 
@@ -40,7 +40,6 @@ namespace DSA.UnitTests.Features.Sorting.Api
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
-            Assert.Equal(100, okResult.Value?.Iterations);
             _mockAlgo.Received(1).Sort(_defaultInput);
         }
         [Fact]
@@ -54,7 +53,7 @@ namespace DSA.UnitTests.Features.Sorting.Api
         [Fact]
         public async Task RunSortAlgorithm_Should_Return_BadRequest_On_Exception()
         {
-            _mockAlgo.Sort(Arg.Any<int[]>()).Returns(_ => { throw new ArgumentException("Invalid input"); });
+            _mockAlgo.When(x => x.Sort(Arg.Any<int[]>())).Do(_ => { throw new ArgumentException("Invalid input"); });
             var result = await SortingEndpoints.RunSortAlgorithm("MockSort", _defaultInput, _serviceList, _mockResilienceProvider, NullLoggerFactory.Instance);
 
             var badRequestResult = Assert.IsType<BadRequest<string>>(result.Result);
@@ -93,7 +92,6 @@ namespace DSA.UnitTests.Features.Sorting.Api
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
-            Assert.Equal(100, okResult.Value?.Iterations);
             _mockAlgo.Received(1).Sort(emptyInput);
 
         }
@@ -106,7 +104,6 @@ namespace DSA.UnitTests.Features.Sorting.Api
             var okResult = Assert.IsType<Ok<SortResult>>(result.Result);
             Assert.NotNull(okResult.Value);
             Assert.Equal("Mock Sort", okResult.Value?.Algorithm);
-            Assert.Equal(100, okResult.Value?.Iterations);
             _mockAlgo.Received(1).Sort(largeInput);
         }
 

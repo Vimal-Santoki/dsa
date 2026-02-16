@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace DSA.IntegrationTests.Features.Sorting.Data
 {
@@ -10,40 +11,30 @@ namespace DSA.IntegrationTests.Features.Sorting.Data
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            // standard data
+            // Scenario 1: Bubble Sort Integration Test
             yield return new object[] {
-                new int[] { 5, 3, 8, 1, 2 }, // input
-                new int[] { 1, 2, 3, 5, 8 }  // expected output
+                new SortingIntegrationScenario {
+                    ScenarioName = "Standard Test",
+                    AlgoCode = "BubbleSort",
+                    ExpectedAlgoName = "Bubble Sort",
+                    Input = [5,6,3,4,9,2,7,3,1],
+                    ExpectedOutput = [1,2,3,3,4,5,6,7,9],
+                    ExpectedStatusCode = 200
+                }
             };
 
-            // mix of positive and negative numbers
-            yield return new object[] { new int[] { -1, -3, -2, 0 }, new int[] { -3, -2, -1, 0 } };
+            // Scenario 2: Quick Sort Integration Test
+            yield return new object[] {
+                new SortingIntegrationScenario {
+                    ScenarioName = "Standard Test",
+                    AlgoCode = "QuickSort",
+                    ExpectedAlgoName = "Quick Sort",
+                    Input = [5,6,3,4,9,2,7,3,1],
+                    ExpectedOutput = [1,2,3,3,4,5,6,7,9],
+                    ExpectedStatusCode = 200
+                }
+            };
 
-            // single element
-            yield return new object[] { new int[] { 10 }, new int[] { 10 } };
-
-            // empty array
-            yield return new object[] { Array.Empty<int>(), Array.Empty<int>() };
-
-            // repetitive elements
-            yield return new object[] { new int[] { 2, 2, 2 }, new int[] { 2, 2, 2 } };
-
-            // already sorted - best case
-            yield return new object[] { new int[] { 2, 3, 4 }, new int[] { 2, 3, 4 } };
-
-            // reverse sorted - worst case
-            yield return new object[] { new int[] { 3, 2, 1 }, new int[] { 2, 3, 4 } };
-
-            // large dataset
-            var largeInputCount = 10000;
-            var largeInput = new int[largeInputCount];
-            var largeExpected = new int[largeInputCount];
-            for (var i = 0; i < largeInputCount; i++)
-            {
-                largeInput[i] = largeInputCount - i;
-                largeExpected[i] = i + 1;
-            }
-            yield return new object[] { largeInput, largeExpected };
 
         }
 

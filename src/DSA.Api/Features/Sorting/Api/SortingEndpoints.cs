@@ -52,30 +52,27 @@ namespace DSA.Api.Features.Sorting.Api
                 {
                     return TypedResults.NotFound($"Sorting algorithm '{algorithm}' not found.");
                 }
-
-                var iterations = 0;
                 if (data.Length > 1000)
                 {
                     // 1. Get the "CpuIntensive" pipeline (Bulkhead)
                     // 2. Offload work to Task.Run (Prevents Thread Starvation)
                     var pipeline = pipelineProvider.GetPipeline(ResilienceExtensions.CpuIntensivePipelineName);
 
-                    iterations = await pipeline.ExecuteAsync(async cancellationToken =>
+                    await pipeline.ExecuteAsync(async cancellationToken =>
                     {
                         // freeing up the Kestrel Request Thread instantly.
-                        return await Task.Run(() => selectedAlgorithm.Sort(data));
+                        await Task.Run(() => selectedAlgorithm.Sort(data), cancellationToken);
                     });
                 }
                 else
                 {
                     // For small data sets, run directly to reduce overhead
-                    iterations = selectedAlgorithm.Sort(data);
+                    selectedAlgorithm.Sort(data);
                 }
 
                 return TypedResults.Ok(new SortResult
                 {
                     Algorithm = selectedAlgorithm.Name,
-                    Iterations = iterations,
                     SortedData = data
                 });
             }
